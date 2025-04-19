@@ -1,12 +1,12 @@
 import { onMounted, onUnmounted } from 'vue';
 
-export function useInactivityWatcher(options?: {
-  timeoutMs?: number;
-  checkIntervalMs?: number;
+export const useInactivityWatcher = (options?: {
+  timeoutSec?: number;
+  checkIntervalSec?: number;
   onInactive?: () => void;
-}) {
-  const timeoutMs = options?.timeoutMs ?? 10 * 60 * 1000; // 10 минут по умолчанию
-  const checkIntervalMs = options?.checkIntervalMs ?? 10_000; // каждые 10 сек
+}) => {
+  const timeoutMs = (options?.timeoutSec ?? 600) * 1000; // по умолчанию 10 минут
+  const checkIntervalMs = (options?.checkIntervalSec ?? 10) * 1000;
   const onInactive = options?.onInactive ?? (() => window.location.reload());
 
   let lastActivityTime = Date.now();
@@ -14,6 +14,7 @@ export function useInactivityWatcher(options?: {
 
   const updateLastActivityTime = () => {
     lastActivityTime = Date.now();
+    console.log('MISHAAAA');
   };
 
   const throttle = (fn: () => void, delay: number) => {
@@ -57,4 +58,4 @@ export function useInactivityWatcher(options?: {
     window.removeEventListener('touchstart', updateLastActivityTime);
     window.removeEventListener('mousemove', throttledMouseMove);
   });
-}
+};

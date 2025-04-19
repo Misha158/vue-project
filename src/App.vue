@@ -8,8 +8,8 @@ import { RouterView } from 'vue-router';
 import { useInactivityWatcher } from '@/composables/useInactivityWatcher';
 
 useInactivityWatcher({
-  timeoutMs: 5_000, // 5 секунд (для теста)
-  checkIntervalMs: 2_000,
+  timeoutSec: 5, // теперь в секундах
+  checkIntervalSec: 5,
   onInactive: () => {
     console.log('⏳ User is inactive — custom handler!');
     window.location.reload();
