@@ -24,8 +24,13 @@ interface Props {
   visible: boolean;
 }
 
+interface Slots {
+  default: () => any;
+}
+
 defineProps<Props>();
 defineEmits<Emits>();
+defineSlots<Slots>();
 </script>
 
 <style scoped lang="scss">
