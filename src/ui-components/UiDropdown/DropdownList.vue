@@ -1,7 +1,7 @@
 <template>
   <div
     :style="dropdownStyles"
-    class="absolute z-10 mt-2 min-w-[150px] bg-white border border-gray-300 rounded-md shadow-lg"
+    class="absolute z-[10000] mt-2 min-w-[150px] bg-white border border-gray-300 rounded-md shadow-lg"
   >
     <ul>
       <li
@@ -18,22 +18,22 @@
 
 <script setup lang="ts">
 interface Emits {
-  (e: 'update:selected', option: string): void
+  (e: 'update:selected', option: string): void;
 }
 
 interface Props {
-  options: string[]
+  options: string[];
   dropdownStyles: {
-    top: string
-    left: string
-    width: string
-  }
+    top: string;
+    left: string;
+    width: string;
+  };
 }
 
-const emit = defineEmits<Emits>()
-const props = defineProps<Props>()
+const emit = defineEmits<Emits>();
+const props = defineProps<Props>();
 
 const selectOption = (option: string) => {
-  emit('update:selected', option)
-}
+  emit('update:selected', option);
+};
 </script>

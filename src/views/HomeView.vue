@@ -11,7 +11,7 @@ const isOpen = ref<boolean>(false);
     <div>
       <button @click="isOpen = true">Open modal</button>
 
-      <UiModal v-if="isOpen" @close="isOpen = false">
+      <UiModal :visible="isOpen" @close="isOpen = false">
         <div class="w-[500px]">
           <header class="mb-5">Header</header>
           <div>Content</div>
