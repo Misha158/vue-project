@@ -16,7 +16,7 @@ export const useInactivityWatcher = (options?: {
 
   const updateLastActivityTime = () => {
     console.log('update last activity time');
-    console.log(document.pointer);
+
     lastActivityTime = Date.now();
   };
 
