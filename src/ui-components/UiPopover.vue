@@ -1,13 +1,17 @@
 <template>
-  <div class="popover-container" @mouseenter="showPopover">
-    <slot></slot>
+  <div
+    class="popover-container"
+    @mouseenter="showPopover"
+    @mouseleave="hidePopover"
+    ref="container"
+  >
+    <div ref="initialElementRef">
+      <slot></slot>
+    </div>
 
-    <div
-      v-if="isPopoverVisible"
-      :class="['popover-content', popoverPosition]"
-      :style="popoverStyles"
-    >
-      <div class="popover-arrow" />
+    <div v-if="isPopoverVisible" class="popover-content" :style="popoverStyle" ref="popoverContent">
+      <div :class="`popover-arrow--${position}`" />
+
       <div class="popover-inner">
         <slot name="popover"></slot>
       </div>
@@ -15,42 +19,23 @@
   </div>
 </template>
 
-<script setup>
-import { ref, computed } from 'vue';
+<script setup lang="ts">
+import { ref, onMounted, watch } from 'vue';
 
-const isPopoverVisible = ref(true);
+interface Props {
+  position: 'top' | 'bottom' | 'left' | 'right';
+}
 
-// Пропс для управления позиционированием поповера
-const props = defineProps({
-  position: {
-    type: String,
-    default: 'top', // по умолчанию поповер сверху
-    validator(value) {
-      return ['top', 'right', 'bottom', 'left'].includes(value);
-    },
-  },
-});
+const props = defineProps<Props>();
 
-// Состояние для позиционирования поповера
-const popoverPosition = computed(() => {
-  return `popover-content--${props.position}`;
-});
+const isPopoverVisible = ref(false);
+const popoverStyle = ref({});
 
-// Стили для динамического позиционирования
-const popoverStyles = computed(() => {
-  switch (props.position) {
-    case 'top':
-      return { bottom: '120%', left: '50%', transform: 'translateX(-50%)' };
-    case 'right':
-      return { top: '50%', left: '120%', transform: 'translateY(-50%)' };
-    case 'bottom':
-      return { top: '120%', left: '50%', transform: 'translateX(-50%)' };
-    case 'left':
-      return { top: '50%', right: '120%', transform: 'translateY(-50%)' };
-    default:
-      return {};
-  }
-});
+const offset = 10;
+
+const container = ref(null);
+const popoverContent = ref(null);
+const initialElementRef = ref(null);
 
 const showPopover = () => {
   isPopoverVisible.value = true;
@@ -59,6 +44,72 @@ const showPopover = () => {
 const hidePopover = () => {
   isPopoverVisible.value = false;
 };
+
+const calculatePopoverPosition = () => {
+  const trigger = initialElementRef.value;
+  const popover = popoverContent.value;
+
+  if (!trigger || !popover) return;
+
+  const triggerRect = trigger.getBoundingClientRect();
+  const popoverRect = popover.getBoundingClientRect();
+
+  if (props.position === 'right') {
+    const top = triggerRect.top + window.scrollY + triggerRect.height / 2 - popoverRect.height / 2;
+    const left = triggerRect.right + offset;
+
+    popoverStyle.value = {
+      top: `${top}px`,
+      left: `${left}px`,
+    };
+  }
+
+  // if (props.position === 'top') {
+  //   if (containerRect.top - popoverRect.height < 0) {
+  //     // Если не помещается, показываем снизу
+  //     newPosition.top = `${containerRect.bottom + offset.value}px`;
+  //     popoverClass.value = 'popover-content--bottom';
+  //   } else {
+  //     newPosition.top = `${containerRect.top - popoverRect.height - offset.value}px`;
+  //     popoverClass.value = 'popover-content--top';
+  //   }
+  // } else if (props.position === 'right') {
+  //   if (containerRect.right + popoverRect.width > window.innerWidth) {
+  //     // Если не помещается справа, сдвигаем влево
+  //     newPosition.left = `${containerRect.left - popoverRect.width - offset.value}px`;
+  //     popoverClass.value = 'popover-content--left';
+  //   } else {
+  //     newPosition.left = `${containerRect.right + offset.value}px`;
+  //     popoverClass.value = 'popover-content--right';
+  //   }
+  // } else if (props.position === 'bottom') {
+  //   if (containerRect.bottom + popoverRect.height > window.innerHeight) {
+  //     // Если не помещается снизу, сдвигаем вверх
+  //     newPosition.top = `${containerRect.top - popoverRect.height - offset.value}px`;
+  //     popoverClass.value = 'popover-content--top';
+  //   } else {
+  //     newPosition.top = `${containerRect.bottom + offset.value}px`;
+  //     popoverClass.value = 'popover-content--bottom';
+  //   }
+  // } else if (props.position === 'left') {
+  //   if (containerRect.left - popoverRect.width < 0) {
+  //     // Если не помещается слева, сдвигаем вправо
+  //     newPosition.left = `${containerRect.right + offset.value}px`;
+  //     popoverClass.value = 'popover-content--right';
+  //   } else {
+  //     newPosition.left = `${containerRect.left - popoverRect.width - offset.value}px`;
+  //     popoverClass.value = 'popover-content--left';
+  //   }
+  // }
+
+  // popoverStyle.value = newPosition;
+};
+
+watch(popoverContent, (newVal) => {
+  if (newVal) {
+    calculatePopoverPosition();
+  }
+});
 </script>
 
 <style scoped>
@@ -68,7 +119,7 @@ const hidePopover = () => {
 }
 
 .popover-content {
-  position: absolute;
+  position: fixed;
   background-color: #333;
   color: white;
   padding: 10px;
@@ -79,7 +130,7 @@ const hidePopover = () => {
   transition: opacity 0.3s;
 }
 
-.popover-content .popover-arrow {
+.popover-arrow {
   position: absolute;
   border-left: 8px solid transparent;
   border-right: 8px solid transparent;
@@ -87,7 +138,7 @@ const hidePopover = () => {
   border-bottom: 8px solid transparent;
 }
 
-.popover-content--top .popover-arrow {
+.popover-arrow--top {
   bottom: -8px;
   left: 50%;
   transform: translateX(-50%);
@@ -95,7 +146,7 @@ const hidePopover = () => {
   border-bottom: none;
 }
 
-.popover-content--right .popover-arrow {
+.popover-arrow--right {
   top: 50%;
   left: -8px;
   transform: translateY(-50%);
@@ -103,7 +154,7 @@ const hidePopover = () => {
   border-left: none;
 }
 
-.popover-content--bottom .popover-arrow {
+.popover-arrow--bottom {
   top: -8px;
   left: 50%;
   transform: translateX(-50%);
@@ -111,7 +162,7 @@ const hidePopover = () => {
   border-bottom: 10px solid #333;
 }
 
-.popover-content--left .popover-arrow {
+.popover-arrow--left {
   top: 50%;
   right: -8px;
   transform: translateY(-50%);
