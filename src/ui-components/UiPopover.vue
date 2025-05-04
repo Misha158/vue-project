@@ -1,12 +1,12 @@
 <template>
   <div
     class="popover-container"
-    @mouseenter="showPopover"
-    @mouseleave="hidePopover"
+    @mouseenter="isPopoverVisible = true"
+    @mouseleave="isPopoverVisible = false"
     ref="container"
   >
-    <div ref="initialElementRef">
-      <slot></slot>
+    <div ref="triggerRef">
+      <slot name="trigger" />
     </div>
 
     <div v-if="isPopoverVisible" class="popover-content" :style="popoverStyle" ref="popoverContent">
@@ -20,7 +20,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted, watch } from 'vue';
+import { ref, onMounted, watch, reactive, computed } from 'vue';
 
 interface Props {
   position: 'top' | 'bottom' | 'left' | 'right';
@@ -29,24 +29,25 @@ interface Props {
 const props = defineProps<Props>();
 
 const isPopoverVisible = ref(false);
-const popoverStyle = ref({});
+const position = reactive({ top: 0, left: 0 });
 
 const offset = 10;
 
 const container = ref(null);
 const popoverContent = ref(null);
-const initialElementRef = ref(null);
+const triggerRef = ref(null);
 
-const showPopover = () => {
-  isPopoverVisible.value = true;
-};
+const popoverStyle = computed(() => {
+  const base = {
+    top: `${position.top}px`,
+    left: `${position.left}px`,
+  };
 
-const hidePopover = () => {
-  isPopoverVisible.value = false;
-};
+  return base;
+});
 
 const calculatePopoverPosition = () => {
-  const trigger = initialElementRef.value;
+  const trigger = triggerRef.value;
   const popover = popoverContent.value;
 
   if (!trigger || !popover) return;
@@ -55,45 +56,48 @@ const calculatePopoverPosition = () => {
   const popoverRect = popover.getBoundingClientRect();
 
   if (props.position === 'right') {
-    const top = triggerRect.top + window.scrollY + triggerRect.height / 2 - popoverRect.height / 2;
-    const left = triggerRect.right + offset;
-
-    popoverStyle.value = {
-      top: `${top}px`,
-      left: `${left}px`,
-    };
+    position.left = triggerRect.right + offset;
+    position.top =
+      triggerRect.top + window.scrollY + triggerRect.height / 2 - popoverRect.height / 2;
   }
 
   if (props.position === 'bottom') {
-    const top = triggerRect.bottom + window.scrollY + offset;
-    const left = triggerRect.left + window.scrollX + triggerRect.width / 2 - popoverRect.width / 2;
-
-    popoverStyle.value = {
-      top: `${top}px`,
-      left: `${left}px`,
-    };
+    position.left =
+      triggerRect.left + window.scrollX + triggerRect.width / 2 - popoverRect.width / 2;
+    position.top = triggerRect.bottom + window.scrollY + offset;
   }
 
   if (props.position === 'top') {
-    const offset = 8;
-    const top = triggerRect.top + window.scrollY - popoverRect.height - offset;
-    const left = triggerRect.left + window.scrollX + triggerRect.width / 2 - popoverRect.width / 2;
-
-    popoverStyle.value = {
-      top: `${top}px`,
-      left: `${left}px`,
-    };
+    position.left =
+      triggerRect.left + window.scrollX + triggerRect.width / 2 - popoverRect.width / 2;
+    position.top = triggerRect.top + window.scrollY - popoverRect.height - offset;
   }
 
   if (props.position === 'left') {
-    const offset = 8;
-    const top = triggerRect.top + window.scrollY + triggerRect.height / 2 - popoverRect.height / 2;
-    const left = triggerRect.left + window.scrollX - popoverRect.width - offset;
+    position.left = triggerRect.left + window.scrollX - popoverRect.width - offset;
+    position.top =
+      triggerRect.top + window.scrollY + triggerRect.height / 2 - popoverRect.height / 2;
+  }
 
-    popoverStyle.value = {
-      top: `${top}px`,
-      left: `${left}px`,
-    };
+  // Коррекция, если поповер выходит за пределы экрана
+  // Корректировка по оси X (горизонталь)
+
+  const viewportWidth = window.innerWidth;
+  const viewportHeight = window.innerHeight;
+
+  if (position.left + popoverRect.width > viewportWidth) {
+    position.left = viewportWidth - popoverRect.width - offset; // Сдвигаем поповер влево, чтобы он не выходил за экран
+  }
+  if (position.left < 0) {
+    position.left = offset; // Если поповер слишком сильно сместился влево, сдвигаем его на заданный отступ
+  }
+
+  // Корректировка по оси Y (вертикаль)
+  if (position.top + popoverRect.height > viewportHeight) {
+    position.top = viewportHeight - popoverRect.height - offset; // Сдвигаем поповер вниз, чтобы он не выходил за экран по высоте
+  }
+  if (position.top < 0) {
+    position.top = offset; // Если поповер слишком сильно поднялся вверх, сдвигаем его вниз
   }
 };
 
