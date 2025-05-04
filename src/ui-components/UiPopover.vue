@@ -64,45 +64,37 @@ const calculatePopoverPosition = () => {
     };
   }
 
-  // if (props.position === 'top') {
-  //   if (containerRect.top - popoverRect.height < 0) {
-  //     // Если не помещается, показываем снизу
-  //     newPosition.top = `${containerRect.bottom + offset.value}px`;
-  //     popoverClass.value = 'popover-content--bottom';
-  //   } else {
-  //     newPosition.top = `${containerRect.top - popoverRect.height - offset.value}px`;
-  //     popoverClass.value = 'popover-content--top';
-  //   }
-  // } else if (props.position === 'right') {
-  //   if (containerRect.right + popoverRect.width > window.innerWidth) {
-  //     // Если не помещается справа, сдвигаем влево
-  //     newPosition.left = `${containerRect.left - popoverRect.width - offset.value}px`;
-  //     popoverClass.value = 'popover-content--left';
-  //   } else {
-  //     newPosition.left = `${containerRect.right + offset.value}px`;
-  //     popoverClass.value = 'popover-content--right';
-  //   }
-  // } else if (props.position === 'bottom') {
-  //   if (containerRect.bottom + popoverRect.height > window.innerHeight) {
-  //     // Если не помещается снизу, сдвигаем вверх
-  //     newPosition.top = `${containerRect.top - popoverRect.height - offset.value}px`;
-  //     popoverClass.value = 'popover-content--top';
-  //   } else {
-  //     newPosition.top = `${containerRect.bottom + offset.value}px`;
-  //     popoverClass.value = 'popover-content--bottom';
-  //   }
-  // } else if (props.position === 'left') {
-  //   if (containerRect.left - popoverRect.width < 0) {
-  //     // Если не помещается слева, сдвигаем вправо
-  //     newPosition.left = `${containerRect.right + offset.value}px`;
-  //     popoverClass.value = 'popover-content--right';
-  //   } else {
-  //     newPosition.left = `${containerRect.left - popoverRect.width - offset.value}px`;
-  //     popoverClass.value = 'popover-content--left';
-  //   }
-  // }
+  if (props.position === 'bottom') {
+    const top = triggerRect.bottom + window.scrollY + offset;
+    const left = triggerRect.left + window.scrollX + triggerRect.width / 2 - popoverRect.width / 2;
 
-  // popoverStyle.value = newPosition;
+    popoverStyle.value = {
+      top: `${top}px`,
+      left: `${left}px`,
+    };
+  }
+
+  if (props.position === 'top') {
+    const offset = 8;
+    const top = triggerRect.top + window.scrollY - popoverRect.height - offset;
+    const left = triggerRect.left + window.scrollX + triggerRect.width / 2 - popoverRect.width / 2;
+
+    popoverStyle.value = {
+      top: `${top}px`,
+      left: `${left}px`,
+    };
+  }
+
+  if (props.position === 'left') {
+    const offset = 8;
+    const top = triggerRect.top + window.scrollY + triggerRect.height / 2 - popoverRect.height / 2;
+    const left = triggerRect.left + window.scrollX - popoverRect.width - offset;
+
+    popoverStyle.value = {
+      top: `${top}px`,
+      left: `${left}px`,
+    };
+  }
 };
 
 watch(popoverContent, (newVal) => {
@@ -122,7 +114,8 @@ watch(popoverContent, (newVal) => {
   position: fixed;
   background-color: #333;
   color: white;
-  padding: 10px;
+  padding: 30px 10px;
+
   border-radius: 5px;
   min-width: 150px;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);

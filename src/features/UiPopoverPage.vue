@@ -1,7 +1,12 @@
 <template>
-  <div ref="testRef">
+  <div class="m">
     <UiPopover :position="'right'">
-      <template #popover> Explanation information </template>
+      <template #popover>
+        <div>Explanation information</div>
+        <div>Explanation information</div>
+        <div>Explanation information</div>
+        <div>Explanation information</div>
+      </template>
 
       <button
         class="border border-black py-2 px-5 rounded-2xl hover:bg-amber-200 active:bg-amber-400 transition cursor-pointer"
