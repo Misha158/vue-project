@@ -1,9 +1,9 @@
 <template>
   <main>
-    <!--    <UiPopoverPage />-->
+    <UiPopoverPage />
   </main>
 </template>
 
 <script setup lang="ts">
-import UiPopoverPage from '@/ui-components/UiPopoverPage.vue';
+import UiPopoverPage from '@/features/UiPopoverPage.vue';
 </script>
