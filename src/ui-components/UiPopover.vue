@@ -10,7 +10,7 @@
     </div>
 
     <div v-if="isPopoverVisible" class="popover-content" :style="popoverStyle" ref="popoverContent">
-      <div :class="`popover-arrow--${position}`" />
+      <div :class="`popover-arrow popover-arrow--${props.position}`" :style="arrowStyle" />
 
       <div class="popover-inner">
         <slot name="popover"></slot>
@@ -30,6 +30,7 @@ const props = defineProps<Props>();
 
 const isPopoverVisible = ref(false);
 const position = reactive({ top: 0, left: 0 });
+const positionArrow = reactive({ top: 0, left: 0 });
 
 const offset = 10;
 
@@ -41,6 +42,15 @@ const popoverStyle = computed(() => {
   const base = {
     top: `${position.top}px`,
     left: `${position.left}px`,
+  };
+
+  return base;
+});
+
+const arrowStyle = computed(() => {
+  const base = {
+    top: `${positionArrow.top}px`,
+    left: `${positionArrow.left}px`,
   };
 
   return base;
@@ -59,6 +69,11 @@ const calculatePopoverPosition = () => {
     position.left = triggerRect.right + offset;
     position.top =
       triggerRect.top + window.scrollY + triggerRect.height / 2 - popoverRect.height / 2;
+
+    // positionArrow.left = popoverRect.left - offset + 1;
+    positionArrow.left = triggerRect.right + 2;
+    // positionArrow.top = triggerRect.top + 30 + window.scrollY + triggerRect.height / 2;
+    positionArrow.top = triggerRect.top + 5 + triggerRect.top / 2;
   }
 
   if (props.position === 'bottom') {
@@ -81,7 +96,6 @@ const calculatePopoverPosition = () => {
 
   // Коррекция, если поповер выходит за пределы экрана
   // Корректировка по оси X (горизонталь)
-
   const viewportWidth = window.innerWidth;
   const viewportHeight = window.innerHeight;
 
@@ -118,7 +132,7 @@ watch(popoverContent, (newVal) => {
   position: fixed;
   background-color: #333;
   color: white;
-  padding: 30px 10px;
+  padding: 00px 10px;
 
   border-radius: 5px;
   min-width: 150px;
@@ -128,43 +142,17 @@ watch(popoverContent, (newVal) => {
 }
 
 .popover-arrow {
-  position: absolute;
+  position: fixed;
   border-left: 8px solid transparent;
   border-right: 8px solid transparent;
   border-top: 8px solid transparent;
   border-bottom: 8px solid transparent;
-}
 
-.popover-arrow--top {
-  bottom: -8px;
-  left: 50%;
-  transform: translateX(-50%);
-  border-top: 10px solid #333;
-  border-bottom: none;
-}
-
-.popover-arrow--right {
   top: 50%;
   left: -8px;
   transform: translateY(-50%);
-  border-right: 10px solid #333;
+  border-right: 10px solid black;
   border-left: none;
-}
-
-.popover-arrow--bottom {
-  top: -8px;
-  left: 50%;
-  transform: translateX(-50%);
-  border-top: none;
-  border-bottom: 10px solid #333;
-}
-
-.popover-arrow--left {
-  top: 50%;
-  right: -8px;
-  transform: translateY(-50%);
-  border-left: 10px solid #333;
-  border-right: none;
 }
 
 .popover-container:hover .popover-content {
