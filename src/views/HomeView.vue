@@ -15,10 +15,14 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue';
+import { onMounted, ref } from 'vue';
 import UiPopoverPage from '@/features/UiPopoverPage.vue';
 import UiCheckbox from '@/components/UiCheckbox.vue';
 import UiSelect from '@/components/UiSelect.vue';
 
 const selected = ref([]);
+
+onMounted(() => {
+  selected.value.push('apple');
+});
 </script>

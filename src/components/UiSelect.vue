@@ -55,7 +55,6 @@ const toggleDropdown = () => {
 const isMultiple = computed(() => props.mode === 'multiple');
 
 const selectOption = (value) => {
-  console.log(isMultiple.value);
   if (isMultiple.value) {
     const newValue = Array.isArray(props.modelValue) ? [...props.modelValue] : [];
     const index = newValue.indexOf(value);
