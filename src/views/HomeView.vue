@@ -2,15 +2,16 @@
   <main>
     <!--    <UiPopoverPage />-->
     <!--    <UiCheckbox v-model="value"> Is agree </UiCheckbox>-->
-    <UiSelect
-      v-model="selected"
-      :options="[
-        { label: 'Apple', value: 'apple' },
-        { label: 'Banana', value: 'banana' },
-        { label: 'Cherry', value: 'cherry' },
-      ]"
-      :mode="'multiple'"
-    />
+    <!--    <UiSelect-->
+    <!--      v-model="selected"-->
+    <!--      :options="[-->
+    <!--        { label: 'Apple', value: 'apple' },-->
+    <!--        { label: 'Banana', value: 'banana' },-->
+    <!--        { label: 'Cherry', value: 'cherry' },-->
+    <!--      ]"-->
+    <!--      :mode="'multiple'"-->
+    <!--    />-->
+    <div>Home</div>
   </main>
 </template>
 
