@@ -2,7 +2,8 @@
   <aside class="sidebar">
     <nav class="menu">
       <RouterLink v-for="item in links" :key="item.href" :to="item.href" class="menu-item">
-        {{ item.label }}
+        <component :is="item.icon" class="icon" />
+        <span>{{ item.label }}</span>
       </RouterLink>
     </nav>
   </aside>
@@ -10,11 +11,12 @@
 
 <script setup lang="ts">
 import { RouterLink } from 'vue-router';
+import IconHome from '@/components/icons/IconHome.vue';
+import IconContacts from '@/components/icons/IconContacts.vue';
 
 const links = [
-  { label: '🏠 Главная', href: '/' },
-  { label: '📄 О проекте', href: '/about' },
-  { label: '📞 Контакты', href: '/contact' },
+  { label: 'Главная', href: '/home', icon: IconHome },
+  { label: 'Контакты', href: '/contact', icon: IconContacts },
 ];
 </script>
 
@@ -39,6 +41,9 @@ const links = [
 }
 
 .menu-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
   text-decoration: none;
   color: white;
   font-weight: 500;
@@ -47,5 +52,10 @@ const links = [
 
 .menu-item:hover {
   color: #60a5fa;
+}
+
+.icon {
+  width: 20px;
+  height: 20px;
 }
 </style>
