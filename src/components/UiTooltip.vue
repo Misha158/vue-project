@@ -1,5 +1,5 @@
 <template>
-  <div class="tooltip-wrapper" @mouseenter="show" @mouseleave="hide">
+  <div class="tooltip-wrapper" @mouseenter="startShowTimer" @mouseleave="startHideTimer">
     <slot />
     <Transition
       enter-active-class="transition duration-200 ease-out"
@@ -9,8 +9,14 @@
       leave-from-class="transform scale-100 opacity-100"
       leave-to-class="transform scale-95 opacity-0"
     >
-      <div v-if="isVisible" class="tooltip" :class="[positionClass]" :style="tooltipStyle">
-        here
+      <div
+        v-if="isVisible"
+        class="tooltip"
+        :class="[positionClass]"
+        :style="tooltipStyle"
+        @mouseenter="clearHideTimer"
+        @mouseleave="startHideTimer"
+      >
         {{ text }}
       </div>
     </Transition>
@@ -32,13 +38,27 @@ const props = withDefaults(defineProps<Props>(), {
 });
 
 const isVisible = ref(false);
+let showTimer: number | undefined;
+let hideTimer: number | undefined;
 
-const show = () => {
-  isVisible.value = true;
+const startShowTimer = () => {
+  clearTimeout(hideTimer);
+  showTimer = setTimeout(() => {
+    console.log('start');
+    isVisible.value = true;
+  }, 200);
 };
 
-const hide = () => {
-  isVisible.value = false;
+const startHideTimer = () => {
+  clearTimeout(showTimer);
+  hideTimer = setTimeout(() => {
+    console.log('hide');
+    isVisible.value = false;
+  }, 200);
+};
+
+const clearHideTimer = () => {
+  clearTimeout(hideTimer);
 };
 
 const positionClass = computed(() => {
@@ -76,6 +96,41 @@ const tooltipStyle = computed(() => {
   box-shadow:
     0 4px 6px -1px rgba(0, 0, 0, 0.1),
     0 2px 4px -1px rgba(0, 0, 0, 0.06);
+}
+
+/* Bridge between icon and tooltip */
+.tooltip::after {
+  content: '';
+  position: absolute;
+  background-color: transparent;
+}
+
+.tooltip-right::after {
+  width: var(--tooltip-offset);
+  height: 100%;
+  left: calc(var(--tooltip-offset) * -1);
+  top: 0;
+}
+
+.tooltip-left::after {
+  width: var(--tooltip-offset);
+  height: 100%;
+  right: calc(var(--tooltip-offset) * -1);
+  top: 0;
+}
+
+.tooltip-top::after {
+  width: 100%;
+  height: var(--tooltip-offset);
+  bottom: calc(var(--tooltip-offset) * -1);
+  left: 0;
+}
+
+.tooltip-bottom::after {
+  width: 100%;
+  height: var(--tooltip-offset);
+  top: calc(var(--tooltip-offset) * -1);
+  left: 0;
 }
 
 .tooltip-right {
