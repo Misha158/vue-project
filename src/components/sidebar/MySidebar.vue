@@ -11,10 +11,18 @@
         }"
       />
     </div>
+
     <nav class="menu">
       <RouterLink v-for="item in links" :key="item.href" :to="item.href" class="menu-item">
-        <component :is="item.icon" class="icon" />
-        <span>{{ item.label }}</span>
+        <UiTooltip v-if="isCollapsed" :text="item.label">
+          <div>
+            <component :is="item.icon" class="icon" />
+          </div>
+        </UiTooltip>
+        <template v-else>
+          <component :is="item.icon" class="icon" />
+          <span>{{ item.label }}</span>
+        </template>
       </RouterLink>
     </nav>
   </aside>
@@ -25,6 +33,7 @@ import { RouterLink } from 'vue-router';
 import IconHome from '@/components/icons/IconHome.vue';
 import IconContacts from '@/components/icons/IconContacts.vue';
 import IconArrow from '@/components/icons/IconArrow.vue';
+import UiTooltip from '@/components/UiTooltip.vue';
 import { ref } from 'vue';
 
 const links = [
@@ -58,7 +67,6 @@ const isCollapsed = ref(false);
   display: flex;
   flex-direction: column;
   gap: 12px;
-  overflow: hidden;
 }
 
 .menu-item {
