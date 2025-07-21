@@ -1,5 +1,16 @@
 <template>
   <aside class="sidebar">
+    <div
+      @click="isCollapsed = !isCollapsed"
+      class="absolute top-2 left-[205px] cursor-pointer p-1 rounded-full bg-gray-200 transition hover:bg-gray-300"
+    >
+      <IconArrow
+        class="w-[25px] h-[25px] stroke-pink-500 rotate-180"
+        :class="{
+          '!rotate-0 transition': isCollapsed,
+        }"
+      />
+    </div>
     <nav class="menu">
       <RouterLink v-for="item in links" :key="item.href" :to="item.href" class="menu-item">
         <component :is="item.icon" class="icon" />
@@ -13,11 +24,15 @@
 import { RouterLink } from 'vue-router';
 import IconHome from '@/components/icons/IconHome.vue';
 import IconContacts from '@/components/icons/IconContacts.vue';
+import IconArrow from '@/components/icons/IconArrow.vue';
+import { ref } from 'vue';
 
 const links = [
   { label: 'Главная', href: '/home', icon: IconHome },
   { label: 'Контакты', href: '/contact', icon: IconContacts },
 ];
+
+const isCollapsed = ref(false);
 </script>
 
 <style scoped>
