@@ -1,8 +1,8 @@
 <template>
-  <aside class="sidebar">
+  <aside class="sidebar" :class="{ collapsed: isCollapsed }">
     <div
       @click="isCollapsed = !isCollapsed"
-      class="absolute top-2 left-[205px] cursor-pointer p-1 rounded-full bg-gray-200 transition hover:bg-gray-300"
+      class="collapse-btn absolute top-2 left-[205px] cursor-pointer p-1 rounded-full bg-gray-200 transition hover:bg-gray-300"
     >
       <IconArrow
         class="w-[25px] h-[25px] stroke-pink-500 rotate-180"
@@ -47,12 +47,18 @@ const isCollapsed = ref(false);
   padding: 20px;
   box-shadow: 2px 0 8px rgba(0, 0, 0, 0.1);
   z-index: 100;
+  transition: width 0.3s ease;
+}
+
+.sidebar.collapsed {
+  width: 80px;
 }
 
 .menu {
   display: flex;
   flex-direction: column;
   gap: 12px;
+  overflow: hidden;
 }
 
 .menu-item {
@@ -63,6 +69,16 @@ const isCollapsed = ref(false);
   color: white;
   font-weight: 500;
   transition: color 0.2s;
+  white-space: nowrap;
+}
+
+.menu-item span {
+  transition: opacity 0.2s;
+  opacity: 1;
+}
+
+.collapsed .menu-item span {
+  opacity: 0;
 }
 
 .menu-item:hover {
@@ -72,5 +88,14 @@ const isCollapsed = ref(false);
 .icon {
   width: 20px;
   height: 20px;
+  flex-shrink: 0;
+}
+
+.collapse-btn {
+  transition: left 0.3s ease;
+}
+
+.collapsed .collapse-btn {
+  left: 65px;
 }
 </style>
