@@ -9,14 +9,7 @@
       leave-from-class="transform scale-100 opacity-100"
       leave-to-class="transform scale-95 opacity-0"
     >
-      <div
-        v-if="isVisible"
-        class="tooltip"
-        :class="[positionClass]"
-        :style="tooltipStyle"
-        @mouseenter="clearHideTimer"
-        @mouseleave="startHideTimer"
-      >
+      <div v-if="isVisible" class="tooltip" :class="[positionClass]" :style="tooltipStyle">
         {{ text }}
       </div>
     </Transition>
