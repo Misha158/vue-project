@@ -13,7 +13,12 @@
     </div>
 
     <nav class="menu">
-      <RouterLink v-for="item in links" :key="item.href" :to="item.href" class="menu-item">
+      <RouterLink
+        v-for="item in links"
+        :key="item.href"
+        :to="{ name: item.componentName }"
+        class="menu-item"
+      >
         <UiTooltip v-if="isCollapsed" :text="item.label">
           <div>
             <component :is="item.icon" class="icon" />
@@ -35,10 +40,12 @@ import IconContacts from '@/components/icons/IconContacts.vue';
 import IconArrow from '@/components/icons/IconArrow.vue';
 import UiTooltip from '@/components/UiTooltip.vue';
 import { ref } from 'vue';
+import IconSendGift from '@/components/icons/IconSendGift.vue';
+import { RouterType } from '@/router';
 
 const links = [
-  { label: 'Главная', href: '/home', icon: IconHome },
-  { label: 'Контакты', href: '/contact', icon: IconContacts },
+  { label: 'Home', componentName: RouterType.HOME, icon: IconHome },
+  { label: 'Send Gift', componentName: RouterType.SEND_GIFT, icon: IconSendGift },
 ];
 
 const isCollapsed = ref(false);
