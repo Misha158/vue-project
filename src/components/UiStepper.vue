@@ -94,19 +94,19 @@ const stepClass = (index: number) => ({
 }
 
 .active .circle {
-  background-color: indianred;
-  border-color: darkred;
-  color: darkred;
+  background-color: #FCE9ED;
+  border-color: #E61E4E;
+  color: #E61E4E;
 }
 
 .completeStep .circle {
-  border-color: darkred;
-  color: darkred;
+  border-color: #E61E4E;
+  color: #E61E4E;
 }
 
 .active .label,
 .completeStep .label {
-  color: darkred;
+  color: #E61E4E;
 }
 
 .label {
