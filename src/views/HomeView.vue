@@ -46,7 +46,7 @@ const steps = ref([
     title: 'Step 3',
     subTitle: 'Complete registration',
     nameForSlot: 'custom-subtitle-step-3'
-  }
+  },
 ]);
 
 onMounted(() => {
