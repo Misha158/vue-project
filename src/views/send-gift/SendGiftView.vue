@@ -1,7 +1,12 @@
 <template>
   <div>
     <div>
-      <UiButton class="flex ms-auto mb-20">Create</UiButton>
+      <UiButton
+        class="flex ms-auto mb-20"
+        @click="$router.push({ name: RouterType.SEND_GIFT_DETAILS })"
+      >
+        Create
+      </UiButton>
 
       <div class="grid gap-4">
         <SendGiftItem v-for="(item, index) in items" :key="index" :item="item" @edit="handleEdit" />
@@ -14,6 +19,7 @@
 import UiButton from '@/components/UiButton.vue';
 import { ref } from 'vue';
 import SendGiftItem from '@/components/send-gift/SendGiftItem.vue';
+import { RouterType } from '@/router';
 
 interface Item {
   imageUrl: string;
