@@ -7,6 +7,7 @@ import SendGiftFormLayout from '@/views/send-gift/SendGiftFormLayout.vue';
 import SendGiftDetailsStep from '@/views/send-gift/SendGiftDetailsStep.vue';
 import SendGiftRecipientsStep from '@/views/send-gift/SendGiftRecipientsStep.vue';
 import SendGiftTagsStep from '@/views/send-gift/SendGiftTagsStep.vue';
+import BudgetLinkView from '@/views/BudgetLinkView.vue';
 
 export enum RouterType {
   SIDEBAR = 'sidebar',
@@ -15,6 +16,7 @@ export enum RouterType {
   SEND_GIFT_DETAILS = 'send-gift-details',
   SEND_GIFT_RECIPIENTS = 'send-gift-recipients',
   SEND_GIFT_TAGS = 'send-gift-tags',
+  BUDGET_LINK = 'budget-link',
 }
 
 const router = createRouter({
@@ -35,6 +37,7 @@ const router = createRouter({
           name: RouterType.SEND_GIFT,
           component: SendGiftView,
         },
+        { path: '/budget-link', name: RouterType.BUDGET_LINK, component: BudgetLinkView },
       ],
     },
     {

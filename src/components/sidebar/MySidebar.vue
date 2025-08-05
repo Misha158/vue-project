@@ -46,6 +46,7 @@ import { RouterType } from '@/router';
 const links = [
   { label: 'Home', componentName: RouterType.HOME, icon: IconHome },
   { label: 'Send Gift', componentName: RouterType.SEND_GIFT, icon: IconSendGift },
+  { label: 'Budget link', componentName: RouterType.BUDGET_LINK, icon: IconSendGift },
 ];
 
 const isCollapsed = ref(false);
