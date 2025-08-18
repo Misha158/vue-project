@@ -30,11 +30,11 @@
 import UiButton from '@/components/UiButton.vue';
 import { RouterType } from '@/router';
 import { useRouter } from 'vue-router';
+import { ref, watch } from 'vue';
 
-const props = defineProps<{
-  step: number;
-  totalSteps: number;
-}>();
+const totalSteps = 3;
+
+const step = ref(1);
 
 defineEmits<{
   (e: 'back'): void;
@@ -49,9 +49,31 @@ const resetForm = () => {
 };
 
 const onBack = () => {
-  if (props.step === 1 || !props.step) {
-    router.push({ name: RouterType.SEND_GIFT });
-  }
+  step.value = step.value - 1;
 };
-const onNext = () => {};
+const onNext = () => {
+  step.value = step.value + 1;
+};
+
+const getAppropriateRouteName = (
+  currentStep: number,
+): RouterType.SEND_GIFT_DETAILS | RouterType.SEND_GIFT_TAGS | RouterType.SEND_GIFT_RECIPIENTS => {
+  if (currentStep === 1) {
+    return RouterType.SEND_GIFT_DETAILS;
+  }
+
+  if (currentStep === 2) {
+    return RouterType.SEND_GIFT_TAGS;
+  }
+
+  if (currentStep === 3) {
+    return RouterType.SEND_GIFT_RECIPIENTS;
+  }
+
+  return RouterType.SEND_GIFT_RECIPIENTS;
+};
+
+watch(step, () => {
+  router.push({ name: getAppropriateRouteName(step.value) });
+});
 </script>

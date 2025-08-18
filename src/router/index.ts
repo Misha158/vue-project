@@ -46,17 +46,17 @@ const router = createRouter({
       component: SendGiftFormLayout,
       children: [
         {
-          path: 'step-1',
+          path: 'step-1-details',
           name: RouterType.SEND_GIFT_DETAILS,
           component: SendGiftDetailsStep,
         },
         {
-          path: 'step-2',
+          path: 'step-2-tags',
           name: RouterType.SEND_GIFT_TAGS,
           component: SendGiftTagsStep,
         },
         {
-          path: 'step-3',
+          path: 'step-3-recipients',
           name: RouterType.SEND_GIFT_RECIPIENTS,
           component: SendGiftRecipientsStep,
         },
