@@ -47,6 +47,7 @@ const links = [
   { label: 'Home', componentName: RouterType.HOME, icon: IconHome },
   { label: 'Send Gift', componentName: RouterType.SEND_GIFT, icon: IconSendGift },
   { label: 'Budget link', componentName: RouterType.BUDGET_LINK, icon: IconSendGift },
+  { label: 'Discounts table', componentName: RouterType.DISCOUNT_SUPPLIERS, icon: IconSendGift },
 ];
 
 const isCollapsed = ref(false);

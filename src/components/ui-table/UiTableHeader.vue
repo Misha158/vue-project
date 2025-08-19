@@ -1,33 +1,25 @@
 <template>
   <thead>
     <tr>
-      <th
-        v-for="(column, colIndex) in columns"
-        :key="column.key"
-        :class="['ui-table__th', column.headerClass]"
-        :style="column.width ? { width: column.width } : undefined"
-      >
-        <slot :name="`header-${column.key}`" :column="column" :colIndex="colIndex">
-          {{ column.label ?? column.key }}
-        </slot>
+      <th v-for="column in columns" :key="column.key" class="ui-table__th">
+        {{ column.label ?? column.key }}
       </th>
     </tr>
   </thead>
 </template>
 
 <script setup lang="ts">
-interface ColumnObject {
-  key: string;
-  label?: string;
-  headerClass?: string;
-  width?: string;
+import type { Column } from '@/types/ui-table.ts';
+
+interface Props {
+  columns: Column[];
 }
 
-defineProps<{ columns: ColumnObject[] }>();
+const props = defineProps<Props>();
 </script>
 
 <style scoped>
-thead th.ui-table__th {
+.ui-table__th {
   text-align: left;
   padding: 10px 12px;
   font-weight: 600;

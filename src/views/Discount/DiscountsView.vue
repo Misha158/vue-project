@@ -1,6 +1,10 @@
 <template>
   <div>
-    <UiTable rows="" />
+    <UiTable :data="supplierDiscounts" :columns="columns">
+      <!--      <template #originPrice>-->
+      <!--        <div>Origin price is 9999</div>-->
+      <!--      </template>-->
+    </UiTable>
   </div>
 </template>
 
@@ -21,6 +25,53 @@ defineProps<{
 defineEmits<{
   (e: 'edit', row: SupplierRow): void;
 }>();
+
+const supplierDiscounts = [
+  {
+    id: 1,
+    originPrice: 212.5,
+    supplierName: 'Acme Corp',
+    discount: 15,
+    discountedPrice: null,
+  },
+  {
+    id: 2,
+    supplierName: 'Globex',
+    originPrice: 212.5,
+    discount: 20,
+    discountedPrice: null,
+  },
+  {
+    id: 3,
+    originPrice: 212.5,
+    supplierName: 'Soylent',
+    discount: 10,
+    discountedPrice: null,
+  },
+];
+
+const columns = [
+  {
+    key: 'supplierName',
+    label: 'Supplier name',
+  },
+  {
+    key: 'originPrice',
+    label: 'Origin price',
+  },
+  {
+    key: 'discount',
+    label: 'Discount, %',
+  },
+  {
+    key: 'discountedPrice',
+    label: 'Price after discount',
+  },
+  {
+    key: 'action',
+    label: 'Action',
+  },
+];
 
 const priceAfterDiscount = (price: number, discount: number) =>
   Math.max(0, price * (1 - (Number(discount) || 0) / 100));
