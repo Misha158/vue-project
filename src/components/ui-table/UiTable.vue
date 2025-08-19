@@ -2,7 +2,11 @@
   <div class="ui-table-wrapper">
     <table class="ui-table">
       <UiTableHeader :columns="columns" />
-      <UiTableBody :data="data" :columns="columns" />
+      <UiTableBody :data="data" :columns="columns">
+        <template v-for="(_, slotName) in $slots" #[slotName]="slotProps">
+          <slot :name="slotName" v-bind="slotProps" />
+        </template>
+      </UiTableBody>
     </table>
   </div>
 </template>

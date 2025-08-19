@@ -2,7 +2,10 @@
   <tbody>
     <tr v-for="(row, rowIndex) in data" :key="rowIndex" class="ui-table__tr">
       <td v-for="(column, colIndex) in columns" :key="column.key" class="ui-table__td">
-        {{ row[column.key] }}
+        <slot v-if="column.slotName" :name="column.slotName" :row="row"> </slot>
+        <div v-else>
+          {{ formatCell(row[column.key]) }}
+        </div>
       </td>
     </tr>
   </tbody>
@@ -17,6 +20,11 @@ interface Props {
 }
 
 const props = defineProps<Props>();
+
+const formatCell = (value: any) => {
+  if (value === null) return '-';
+  return value;
+};
 </script>
 
 <style scoped>

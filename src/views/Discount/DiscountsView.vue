@@ -1,15 +1,20 @@
 <template>
   <div>
     <UiTable :data="supplierDiscounts" :columns="columns">
-      <!--      <template #originPrice>-->
-      <!--        <div>Origin price is 9999</div>-->
-      <!--      </template>-->
+      <template #discount="{ row }">
+        <div>Discount is 9999 - real discount {{ row.discount }}</div>
+      </template>
+
+      <template #action="{ row }">
+        <UiButton>Edit</UiButton>
+      </template>
     </UiTable>
   </div>
 </template>
 
 <script setup lang="ts">
 import UiTable from '@/components/ui-table/UiTable.vue';
+import UiButton from '@/components/UiButton.vue';
 
 type SupplierRow = {
   id: string | number;
@@ -62,6 +67,7 @@ const columns = [
   {
     key: 'discount',
     label: 'Discount, %',
+    slotName: 'discount',
   },
   {
     key: 'discountedPrice',
@@ -70,6 +76,7 @@ const columns = [
   {
     key: 'action',
     label: 'Action',
+    slotName: 'action',
   },
 ];
 
