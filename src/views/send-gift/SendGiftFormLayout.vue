@@ -30,9 +30,10 @@
 import UiButton from '@/components/UiButton.vue';
 import { RouterType } from '@/router';
 import { useRouter } from 'vue-router';
-import { ref, watch } from 'vue';
+import { onUnmounted, ref, watch } from 'vue';
 import { useSendGiftStore } from '@/stores/send-a-gift.ts';
 import { storeToRefs } from 'pinia';
+import { saveSendGiftToLC } from '@/services/sendGifts.ts';
 
 const totalSteps = 4;
 
@@ -45,7 +46,8 @@ defineEmits<{
 const router = useRouter();
 
 const sendGiftStore = useSendGiftStore();
-const { currentStep, isNextBtnDisabled, backBtnText, nextBtnText } = storeToRefs(sendGiftStore);
+const { formData, currentStep, isNextBtnDisabled, backBtnText, nextBtnText } =
+  storeToRefs(sendGiftStore);
 
 const resetForm = () => {
   router.push({ name: RouterType.SEND_GIFT });
@@ -58,17 +60,24 @@ const onBack = () => {
   }
 
   currentStep.value = currentStep.value - 1;
+  saveSendGiftToLC({ currentStep: currentStep.value, formData: formData.value });
 };
 const onNext = () => {
   if (currentStep.value === 4) {
     sendGiftStore.sendGifts();
+    router.push({ name: RouterType.SEND_GIFT });
   }
   currentStep.value = currentStep.value + 1;
+  saveSendGiftToLC({ currentStep: currentStep.value, formData: formData.value });
 };
 
 const getAppropriateRouteName = (
   currentStep: number,
-): RouterType.SEND_GIFT_DETAILS | RouterType.SEND_GIFT_TAGS | RouterType.SEND_GIFT_RECIPIENTS => {
+):
+  | RouterType.SEND_GIFT_DETAILS
+  | RouterType.SEND_GIFT_TAGS
+  | RouterType.SEND_GIFT_RECIPIENTS
+  | RouterType.SEND_GIFT_SUMMARY => {
   if (currentStep === 1) {
     return RouterType.SEND_GIFT_DETAILS;
   }
@@ -90,5 +99,11 @@ const getAppropriateRouteName = (
 
 watch(currentStep, () => {
   router.push({ name: getAppropriateRouteName(currentStep.value) });
+});
+
+sendGiftStore.setDataFromLC();
+
+onUnmounted(() => {
+  sendGiftStore.resetForm();
 });
 </script>

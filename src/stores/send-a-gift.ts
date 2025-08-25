@@ -1,14 +1,17 @@
 import { ref, computed, reactive } from 'vue';
 import { defineStore } from 'pinia';
+import { deleteSendGiftFromLC, getSendGiftFromLC } from '@/services/sendGifts.ts';
+
+const defaultFormData = {
+  details: '',
+  tags: [],
+  recipients: [],
+};
 
 export const useSendGiftStore = defineStore('send-a-gift', () => {
   const currentStep = ref(1);
 
-  const formData = reactive({
-    details: '',
-    tags: [],
-    recipients: [],
-  });
+  const formData = reactive({ ...defaultFormData });
 
   const isNextBtnDisabled = computed(() => {
     if (currentStep.value === 1) {
@@ -50,5 +53,27 @@ export const useSendGiftStore = defineStore('send-a-gift', () => {
     alert(formData);
   };
 
-  return { formData, currentStep, isNextBtnDisabled, backBtnText, nextBtnText, sendGifts };
+  const setDataFromLC = () => {
+    const data = getSendGiftFromLC();
+    console.log({ data });
+    currentStep.value = data?.currentStep || 1;
+    Object.assign(formData, data?.formData || { ...defaultFormData });
+  };
+
+  const resetForm = () => {
+    deleteSendGiftFromLC();
+    currentStep.value = 1;
+    Object.assign(formData, { ...defaultFormData });
+  };
+
+  return {
+    formData,
+    currentStep,
+    isNextBtnDisabled,
+    backBtnText,
+    nextBtnText,
+    sendGifts,
+    setDataFromLC,
+    resetForm,
+  };
 });
