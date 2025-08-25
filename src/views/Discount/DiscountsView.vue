@@ -6,7 +6,7 @@
       </template>
 
       <template #action="{ row }">
-        <UiButton>Edit</UiButton>
+        <UiButton @click="onEdit">Edit</UiButton>
       </template>
     </UiTable>
   </div>
@@ -87,6 +87,10 @@ const toMoney = (v: number) =>
   new Intl.NumberFormat(undefined, { style: 'currency', currency: 'USD' }).format(v);
 
 const toPercent = (v: number) => `${(Number(v) || 0).toFixed(0)}%`;
+
+const onEdit = () => {
+  return;
+};
 </script>
 
 <style scoped>

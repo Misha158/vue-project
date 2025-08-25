@@ -1,7 +1,7 @@
 <template>
   <div>
     <h1>Recipients</h1>
-    <UiSelect :options="options" v-model="formData.tags" mode="multiple" />
+    <UiSelect :options="options" v-model="formData.recipients" mode="multiple" />
   </div>
 </template>
 

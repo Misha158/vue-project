@@ -4,7 +4,7 @@
     <header class="flex items-center justify-between mb-6 sticky top-0 bg-white z-20 py-4 border-b">
       <div class="text-xl font-bold text-gray-800">🎁 GiftForm</div>
 
-      <div class="text-sm text-gray-500">Step {{ step }} of {{ totalSteps }}</div>
+      <div class="text-sm text-gray-500">Step {{ currentStep }} of {{ totalSteps }}</div>
 
       <button @click="resetForm" class="text-gray-400 hover:text-red-500 text-xl cursor-pointer">
         ×
@@ -20,8 +20,8 @@
     <footer
       class="fixed bottom-0 left-0 right-0 bg-white shadow-md border-t py-4 px-4 z-20 flex justify-center mx-auto"
     >
-      <UiButton @click="onBack" variant="secondary" class="me-5">Back</UiButton>
-      <UiButton @click="onNext">Next</UiButton>
+      <UiButton @click="onBack" variant="secondary" class="me-5">{{ backBtnText }}</UiButton>
+      <UiButton :disabled="isNextBtnDisabled" @click="onNext">{{ nextBtnText }}</UiButton>
     </footer>
   </div>
 </template>
@@ -31,10 +31,10 @@ import UiButton from '@/components/UiButton.vue';
 import { RouterType } from '@/router';
 import { useRouter } from 'vue-router';
 import { ref, watch } from 'vue';
+import { useSendGiftStore } from '@/stores/send-a-gift.ts';
+import { storeToRefs } from 'pinia';
 
-const totalSteps = 3;
-
-const step = ref(1);
+const totalSteps = 4;
 
 defineEmits<{
   (e: 'back'): void;
@@ -44,15 +44,26 @@ defineEmits<{
 
 const router = useRouter();
 
+const sendGiftStore = useSendGiftStore();
+const { currentStep, isNextBtnDisabled, backBtnText, nextBtnText } = storeToRefs(sendGiftStore);
+
 const resetForm = () => {
   router.push({ name: RouterType.SEND_GIFT });
 };
 
 const onBack = () => {
-  step.value = step.value - 1;
+  if (currentStep.value === 1) {
+    router.push({ name: RouterType.SEND_GIFT });
+    return;
+  }
+
+  currentStep.value = currentStep.value - 1;
 };
 const onNext = () => {
-  step.value = step.value + 1;
+  if (currentStep.value === 4) {
+    sendGiftStore.sendGifts();
+  }
+  currentStep.value = currentStep.value + 1;
 };
 
 const getAppropriateRouteName = (
@@ -70,10 +81,14 @@ const getAppropriateRouteName = (
     return RouterType.SEND_GIFT_RECIPIENTS;
   }
 
+  if (currentStep === 4) {
+    return RouterType.SEND_GIFT_SUMMARY;
+  }
+
   return RouterType.SEND_GIFT_RECIPIENTS;
 };
 
-watch(step, () => {
-  router.push({ name: getAppropriateRouteName(step.value) });
+watch(currentStep, () => {
+  router.push({ name: getAppropriateRouteName(currentStep.value) });
 });
 </script>
