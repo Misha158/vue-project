@@ -4,7 +4,7 @@ import { deleteSendGiftFromLC, getSendGiftFromLC } from '@/services/sendGifts.ts
 
 const defaultFormData = {
   details: '',
-  tags: [],
+  tag: '',
   recipients: [],
 };
 
@@ -19,7 +19,7 @@ export const useSendGiftStore = defineStore('send-a-gift', () => {
     }
 
     if (currentStep.value === 2) {
-      return !formData.tags.length;
+      return !formData.tag;
     }
 
     if (currentStep.value === 3) {
@@ -27,7 +27,7 @@ export const useSendGiftStore = defineStore('send-a-gift', () => {
     }
 
     if (currentStep.value === 4) {
-      return !formData.recipients.length || !formData.tags.length || !formData.details;
+      return !formData.recipients.length || !formData.tag || !formData.details;
     }
 
     return true;
@@ -50,12 +50,12 @@ export const useSendGiftStore = defineStore('send-a-gift', () => {
   });
 
   const sendGifts = () => {
-    alert(formData);
+    alert(JSON.stringify(formData));
   };
 
   const setDataFromLC = () => {
     const data = getSendGiftFromLC();
-    console.log({ data });
+
     currentStep.value = data?.currentStep || 1;
     Object.assign(formData, data?.formData || { ...defaultFormData });
   };

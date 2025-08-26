@@ -7,7 +7,7 @@
     </div>
     <div>
       <div>Tags</div>
-      <div>{{ formData.tags }}</div>
+      <div>{{ formData.tag }}</div>
     </div>
     <div>
       <div>Recipients</div>

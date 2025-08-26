@@ -20,6 +20,10 @@ import UiButton from '@/components/UiButton.vue';
 import { ref } from 'vue';
 import SendGiftItem from '@/components/send-gift/SendGiftItem.vue';
 import { RouterType } from '@/router';
+import { useRouter } from 'vue-router';
+import { useSendGiftStore } from '@/stores/send-a-gift.ts';
+import { storeToRefs } from 'pinia';
+import { saveSendGiftToLC } from '@/services/sendGifts.ts';
 
 interface Item {
   imageUrl: string;
@@ -28,6 +32,11 @@ interface Item {
   recipientIds: number[];
   tags: string[];
 }
+
+const sendGiftStore = useSendGiftStore();
+const { formData } = storeToRefs(sendGiftStore);
+
+const router = useRouter();
 
 const defaultItems: Item[] = [
   {
@@ -55,8 +64,25 @@ const defaultItems: Item[] = [
 
 const items = ref<Item[]>(defaultItems);
 
-const handleEdit = () => {
-  return;
+const fetchSendGiftMock = () => {
+  return new Promise((resolve) => {
+    setTimeout(() => {
+      resolve({
+        details: 'mock details',
+        tag: 'food',
+        recipients: ['food'],
+      });
+    }, 500); // эмуляция задержки 0.5 сек
+  });
+};
+
+const handleEdit = async () => {
+  const result = await fetchSendGiftMock();
+  Object.assign(formData.value, result);
+
+  saveSendGiftToLC({ currentStep: 1, formData: formData.value });
+
+  router.push({ name: RouterType.SEND_GIFT_DETAILS, query: { mode: 'edit' } });
 };
 </script>
 

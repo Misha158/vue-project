@@ -29,7 +29,7 @@
 <script setup lang="ts">
 import UiButton from '@/components/UiButton.vue';
 import { RouterType } from '@/router';
-import { useRouter } from 'vue-router';
+import { useRoute, useRouter } from 'vue-router';
 import { onUnmounted, ref, watch } from 'vue';
 import { useSendGiftStore } from '@/stores/send-a-gift.ts';
 import { storeToRefs } from 'pinia';
@@ -44,6 +44,7 @@ defineEmits<{
 }>();
 
 const router = useRouter();
+const route = useRoute();
 
 const sendGiftStore = useSendGiftStore();
 const { formData, currentStep, isNextBtnDisabled, backBtnText, nextBtnText } =
@@ -66,6 +67,7 @@ const onNext = () => {
   if (currentStep.value === 4) {
     sendGiftStore.sendGifts();
     router.push({ name: RouterType.SEND_GIFT });
+    return;
   }
   currentStep.value = currentStep.value + 1;
   saveSendGiftToLC({ currentStep: currentStep.value, formData: formData.value });
