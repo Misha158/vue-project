@@ -2,11 +2,20 @@
   <div>
     <UiTable :data="data" :columns="columns">
       <template #discount="{ row }">
-        <div>Discount is 9999 - real discount {{ row.discount }}</div>
+        <div v-if="editingRows[row.id]">
+          <input
+            type="number"
+            v-model="editingRows[row.id].discount"
+            class="border px-2 py-1 w-20"
+          />
+        </div>
+        <div v-else>{{ row.discount }}</div>
       </template>
 
       <template #action="{ row }">
-        <UiButton @click="onEdit">Edit</UiButton>
+        <UiButton v-if="!editingRows[row.id]" @click="onEdit(row)"> Edit </UiButton>
+        <UiButton v-else @click="onSave(row)"> Save </UiButton>
+        <UiButton v-if="editingRows[row.id]" @click="onCancel(row)" class="ml-2"> Cancel </UiButton>
       </template>
     </UiTable>
   </div>
@@ -15,6 +24,7 @@
 <script setup lang="ts">
 import UiTable from '@/components/ui-table/UiTable.vue';
 import UiButton from '@/components/UiButton.vue';
+import { reactive } from 'vue';
 
 type SupplierRow = {
   id: string | number;
@@ -28,12 +38,25 @@ defineProps<{
   data: SupplierRow[];
 }>();
 
-defineEmits<{
-  (e: 'edit', row: SupplierRow): void;
+const emit = defineEmits<{
+  (e: 'save', row: SupplierRow): void;
 }>();
 
-const onEdit = () => {
-  return;
+// словарь редактируемых строк
+const editingRows: Record<string | number, SupplierRow> = reactive({});
+
+const onEdit = (row: SupplierRow) => {
+  // создаем копию строки в словаре редактируемых
+  editingRows[row.id] = { ...row };
+};
+
+const onSave = (row: SupplierRow) => {
+  emit('save', editingRows[row.id]);
+  delete editingRows[row.id]; // выйти из режима редактирования
+};
+
+const onCancel = (row: SupplierRow) => {
+  delete editingRows[row.id]; // просто выкидываем изменения
 };
 </script>
 

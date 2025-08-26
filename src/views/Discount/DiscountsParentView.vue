@@ -1,13 +1,14 @@
 <template>
   <div>
-    <DiscountsView :columns="columns" :data="supplierDiscounts" />
+    <DiscountsView :columns="columns" :data="supplierDiscounts" @save="onSave" />
   </div>
 </template>
 
 <script setup lang="ts">
 import DiscountsView from '@/views/Discount/DiscountsView.vue';
+import { ref } from 'vue';
 
-const supplierDiscounts = [
+const supplierDiscounts = ref([
   {
     id: 1,
     originPrice: 212.5,
@@ -29,7 +30,7 @@ const supplierDiscounts = [
     discount: 10,
     discountedPrice: null,
   },
-];
+]);
 
 const columns = [
   {
@@ -56,8 +57,14 @@ const columns = [
   },
 ];
 
-const onEdit = () => {
-  return;
+const onSave = (editedRow) => {
+  supplierDiscounts.value = supplierDiscounts.value.map((discount) => {
+    if (discount.id === editedRow.id) {
+      return editedRow;
+    }
+
+    return discount;
+  });
 };
 </script>
 
