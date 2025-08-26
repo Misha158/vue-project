@@ -1,6 +1,6 @@
 <template>
   <div>
-    <UiTable :data="supplierDiscounts" :columns="columns">
+    <UiTable :data="data" :columns="columns">
       <template #discount="{ row }">
         <div>Discount is 9999 - real discount {{ row.discount }}</div>
       </template>
@@ -24,69 +24,13 @@ type SupplierRow = {
 };
 
 defineProps<{
-  rows: SupplierRow[];
+  columns: SupplierRow[];
+  data: SupplierRow[];
 }>();
 
 defineEmits<{
   (e: 'edit', row: SupplierRow): void;
 }>();
-
-const supplierDiscounts = [
-  {
-    id: 1,
-    originPrice: 212.5,
-    supplierName: 'Acme Corp',
-    discount: 15,
-    discountedPrice: null,
-  },
-  {
-    id: 2,
-    supplierName: 'Globex',
-    originPrice: 212.5,
-    discount: 20,
-    discountedPrice: null,
-  },
-  {
-    id: 3,
-    originPrice: 212.5,
-    supplierName: 'Soylent',
-    discount: 10,
-    discountedPrice: null,
-  },
-];
-
-const columns = [
-  {
-    key: 'supplierName',
-    label: 'Supplier name',
-  },
-  {
-    key: 'originPrice',
-    label: 'Origin price',
-  },
-  {
-    key: 'discount',
-    label: 'Discount, %',
-    slotName: 'discount',
-  },
-  {
-    key: 'discountedPrice',
-    label: 'Price after discount',
-  },
-  {
-    key: 'action',
-    label: 'Action',
-    slotName: 'action',
-  },
-];
-
-const priceAfterDiscount = (price: number, discount: number) =>
-  Math.max(0, price * (1 - (Number(discount) || 0) / 100));
-
-const toMoney = (v: number) =>
-  new Intl.NumberFormat(undefined, { style: 'currency', currency: 'USD' }).format(v);
-
-const toPercent = (v: number) => `${(Number(v) || 0).toFixed(0)}%`;
 
 const onEdit = () => {
   return;

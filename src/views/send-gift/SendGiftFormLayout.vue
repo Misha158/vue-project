@@ -28,7 +28,7 @@
 
 <script setup lang="ts">
 import UiButton from '@/components/UiButton.vue';
-import { RouterType } from '@/router';
+import { RouterType } from '@/consts/route.ts';
 import { useRoute, useRouter } from 'vue-router';
 import { onUnmounted, ref, watch } from 'vue';
 import { useSendGiftStore } from '@/stores/send-a-gift.ts';

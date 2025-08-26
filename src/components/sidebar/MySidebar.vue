@@ -41,7 +41,7 @@ import IconArrow from '@/components/icons/IconArrow.vue';
 import UiTooltip from '@/components/UiTooltip.vue';
 import { ref } from 'vue';
 import IconSendGift from '@/components/icons/IconSendGift.vue';
-import { RouterType } from '@/router';
+import { RouterType } from '@/consts/route.ts';
 
 const links = [
   { label: 'Home', componentName: RouterType.HOME, icon: IconHome },

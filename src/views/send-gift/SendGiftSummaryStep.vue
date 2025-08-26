@@ -25,7 +25,7 @@ import { useSendGiftStore } from '@/stores/send-a-gift.ts';
 import { storeToRefs } from 'pinia';
 import { computed } from 'vue';
 import { useRouter } from 'vue-router';
-import { RouterType } from '@/router';
+import { RouterType } from '@/consts/route.ts';
 
 const sendGiftStore = useSendGiftStore();
 const { formData, currentStep } = storeToRefs(sendGiftStore);

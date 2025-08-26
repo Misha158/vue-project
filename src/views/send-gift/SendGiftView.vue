@@ -19,7 +19,7 @@
 import UiButton from '@/components/UiButton.vue';
 import { ref } from 'vue';
 import SendGiftItem from '@/components/send-gift/SendGiftItem.vue';
-import { RouterType } from '@/router';
+import { RouterType } from '@/consts/route.ts';
 import { useRouter } from 'vue-router';
 import { useSendGiftStore } from '@/stores/send-a-gift.ts';
 import { storeToRefs } from 'pinia';
