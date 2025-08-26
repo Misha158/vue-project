@@ -53,13 +53,11 @@ const router = createRouter({
       path: '/send-a-gift-form',
       name: 'send-gift-form',
       component: SendGiftFormLayout,
-      props: true,
       children: [
         {
           path: 'step-1-details',
           name: RouterType.SEND_GIFT_DETAILS,
           component: SendGiftDetailsStep,
-          props: true,
         },
         {
           path: 'step-2-tags',

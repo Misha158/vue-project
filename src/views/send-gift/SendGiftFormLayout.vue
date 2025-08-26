@@ -12,7 +12,7 @@
     </header>
 
     <!-- Main content -->
-    <main class="flex-1">
+    <main class="flex justify-center items-center">
       <router-view />
     </main>
 
@@ -100,7 +100,10 @@ const getAppropriateRouteName = (
 };
 
 watch(currentStep, () => {
-  router.push({ name: getAppropriateRouteName(currentStep.value) });
+  router.push({
+    name: getAppropriateRouteName(currentStep.value),
+    query: { mode: route.query.mode },
+  });
 });
 
 sendGiftStore.setDataFromLC();
