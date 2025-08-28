@@ -1,5 +1,9 @@
 <template>
   <div>
+    <div class="mb-5">
+      <UiButton @click="onBulkEdit" class="me-5">Bulk edit</UiButton>
+      <UiButton @click="onBulkSave">Bulk Save</UiButton>
+    </div>
     <UiTable :data="data" :columns="columns">
       <template #discount="{ row }">
         <div v-if="editingRows[row.id]">
@@ -33,13 +37,14 @@ type SupplierRow = {
   price: number; // исходная цена
 };
 
-defineProps<{
+const props = defineProps<{
   columns: SupplierRow[];
   data: SupplierRow[];
 }>();
 
 const emit = defineEmits<{
   (e: 'save', row: SupplierRow): void;
+  (e: 'saveAll', rows: SupplierRow[]): void;
 }>();
 
 // словарь редактируемых строк
@@ -57,6 +62,21 @@ const onSave = (row: SupplierRow) => {
 
 const onCancel = (row: SupplierRow) => {
   delete editingRows[row.id]; // просто выкидываем изменения
+};
+
+const onBulkEdit = () => {
+  const result = props.data.reduce((acc, item) => {
+    return { ...acc, [item.id]: item };
+  }, {});
+
+  console.log({ result });
+  Object.assign(editingRows, result);
+};
+
+const onBulkSave = () => {
+  const rows = Object.values(editingRows);
+  emit('saveAll', rows);
+  Object.keys(editingRows).forEach((key) => delete editingRows[key]); // очистка
 };
 </script>
 

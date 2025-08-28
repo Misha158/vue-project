@@ -1,6 +1,11 @@
 <template>
   <div>
-    <DiscountsView :columns="columns" :data="supplierDiscounts" @save="onSave" />
+    <DiscountsView
+      :columns="columns"
+      :data="supplierDiscounts"
+      @save="onSave"
+      @saveAll="onSaveAll"
+    />
   </div>
 </template>
 
@@ -65,6 +70,10 @@ const onSave = (editedRow) => {
 
     return discount;
   });
+};
+
+const onSaveAll = (editedRows) => {
+  supplierDiscounts.value = editedRows;
 };
 </script>
 
