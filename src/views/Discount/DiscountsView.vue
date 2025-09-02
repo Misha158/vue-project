@@ -11,9 +11,22 @@
             type="number"
             v-model="editingRows[row.id].discount"
             class="border px-2 py-1 w-20"
+            @input="onUpdateDiscount($event, row.id)"
           />
         </div>
         <div v-else>{{ row.discount }}</div>
+      </template>
+
+      <template #cost="{ row }">
+        <div v-if="editingRows[row.id]">
+          <input
+            type="number"
+            v-model="editingRows[row.id].cost"
+            @input="onUpdateCost($event, row.id)"
+            class="border px-2 py-1 w-20"
+          />
+        </div>
+        <div v-else>{{ row.cost }}</div>
       </template>
 
       <template #action="{ row }">
@@ -34,7 +47,8 @@ type SupplierRow = {
   id: string | number;
   supplierName: string;
   discount: number; // в процентах, например 15 = 15%
-  price: number; // исходная цена
+  originPrice: number; // исходная цена
+  cost: number; // цена после скидки
 };
 
 const props = defineProps<{
@@ -69,7 +83,6 @@ const onBulkEdit = () => {
     return { ...acc, [item.id]: item };
   }, {});
 
-  console.log({ result });
   Object.assign(editingRows, result);
 };
 
@@ -77,6 +90,28 @@ const onBulkSave = () => {
   const rows = Object.values(editingRows);
   emit('saveAll', rows);
   Object.keys(editingRows).forEach((key) => delete editingRows[key]); // очистка
+};
+
+const onUpdateDiscount = (event, editedRowId) => {
+  const discount = Number(event.target.value);
+
+  const originPrice = editingRows[editedRowId].originPrice;
+
+  editingRows[editedRowId].discount = discount; // сохраняем скидку
+  editingRows[editedRowId].cost = originPrice * (1 - discount / 100); // считаем итоговую цену
+};
+
+const onUpdateCost = (event, editedRowId) => {
+  const cost = Number(event.target.value);
+  const originPrice = editingRows[editedRowId].originPrice;
+
+  editingRows[editedRowId].cost = cost;
+
+  if (originPrice > 0) {
+    editingRows[editedRowId].discount = ((1 - cost / originPrice) * 100).toFixed(2);
+  } else {
+    editingRows[editedRowId].discount = 0;
+  }
 };
 </script>
 

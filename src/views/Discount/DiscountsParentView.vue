@@ -19,6 +19,7 @@ const supplierDiscounts = ref([
     originPrice: 212.5,
     supplierName: 'Acme Corp',
     discount: 15,
+    cost: 212.5,
     discountedPrice: null,
   },
   {
@@ -26,6 +27,7 @@ const supplierDiscounts = ref([
     supplierName: 'Globex',
     originPrice: 212.5,
     discount: 20,
+    cost: 212.5,
     discountedPrice: null,
   },
   {
@@ -33,6 +35,7 @@ const supplierDiscounts = ref([
     originPrice: 212.5,
     supplierName: 'Soylent',
     discount: 10,
+    cost: 212.5,
     discountedPrice: null,
   },
 ]);
@@ -52,8 +55,9 @@ const columns = [
     slotName: 'discount',
   },
   {
-    key: 'discountedPrice',
+    key: 'cost',
     label: 'Price after discount',
+    slotName: 'cost',
   },
   {
     key: 'action',
