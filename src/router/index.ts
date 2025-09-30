@@ -6,6 +6,7 @@ import BudgetLinkView from '@/views/BudgetLinkView.vue';
 import DiscountsParentView from '@/views/Discount/DiscountsParentView.vue';
 import { sendGiftRoutes } from '@/router/sendGifts.ts';
 import { RouterType } from '@/consts/route.ts';
+import StripeView from '@/views/StripeView.vue';
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -30,6 +31,12 @@ const router = createRouter({
           path: '/discount-suppliers',
           name: RouterType.DISCOUNT_SUPPLIERS,
           component: DiscountsParentView,
+        },
+
+        {
+          path: '/stripe',
+          name: RouterType.STRIPE,
+          component: StripeView,
         },
       ],
     },

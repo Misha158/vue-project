@@ -8,4 +8,5 @@ export enum RouterType {
   SEND_GIFT_TAGS = 'send-gift-tags',
   BUDGET_LINK = 'budget-link',
   DISCOUNT_SUPPLIERS = 'discount-suppliers',
+  STRIPE = 'stripe',
 }
