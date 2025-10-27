@@ -68,36 +68,36 @@ let cardCvcElement: StripeCardCvcElement;
 // Используем переменную окружения для публичного ключа Stripe
 const STRIPE_PUBLIC_KEY = import.meta.env.VITE_STRIPE_PUBLIC_KEY;
 
-onMounted(async () => {
-  try {
-    stripe = await loadStripe(STRIPE_PUBLIC_KEY);
-
-    if (stripe) {
-      elements = stripe.elements();
-
-      const elementStyle = {
-        base: {
-          fontSize: '16px',
-          color: '#32325d',
-          '::placeholder': { color: '#a0aec0' },
-        },
-        invalid: { color: '#e53e3e' },
-      } as const;
-
-      cardNumberElement = elements.create('cardNumber', { style: elementStyle });
-      cardNumberElement.mount('#card-number-element');
-
-      cardExpiryElement = elements.create('cardExpiry', { style: elementStyle });
-      cardExpiryElement.mount('#card-expiry-element');
-
-      cardCvcElement = elements.create('cardCvc', { style: elementStyle });
-      cardCvcElement.mount('#card-cvc-element');
-    }
-  } catch (err: unknown) {
-    const message = err instanceof Error ? err.message : 'Stripe initialization failed.';
-    error.value = message;
-  }
-});
+// onMounted(async () => {
+//   try {
+//     stripe = await loadStripe(STRIPE_PUBLIC_KEY);
+//
+//     if (stripe) {
+//       elements = stripe.elements();
+//
+//       const elementStyle = {
+//         base: {
+//           fontSize: '16px',
+//           color: '#32325d',
+//           '::placeholder': { color: '#a0aec0' },
+//         },
+//         invalid: { color: '#e53e3e' },
+//       } as const;
+//
+//       cardNumberElement = elements.create('cardNumber', { style: elementStyle });
+//       cardNumberElement.mount('#card-number-element');
+//
+//       cardExpiryElement = elements.create('cardExpiry', { style: elementStyle });
+//       cardExpiryElement.mount('#card-expiry-element');
+//
+//       cardCvcElement = elements.create('cardCvc', { style: elementStyle });
+//       cardCvcElement.mount('#card-cvc-element');
+//     }
+//   } catch (err: unknown) {
+//     const message = err instanceof Error ? err.message : 'Stripe initialization failed.';
+//     error.value = message;
+//   }
+// });
 
 const handleSubmit = async () => {
   if (!stripe) return;
