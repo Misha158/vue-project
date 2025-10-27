@@ -1,7 +1,14 @@
 <template>
-  <div class="flex">
-    <MySidebar />
-    <router-view class="content" />
+  <div>
+    <header class="bg-amber-100 h-[80px]">
+      <div>
+        <img src="@/assets/images/maclogo.png" alt="" width="60" height="70" class="pt-2 ml-10" />
+      </div>
+    </header>
+    <div class="flex">
+      <MySidebar class="!mt-[80px]" />
+      <router-view class="content" />
+    </div>
   </div>
 </template>
 
