@@ -1,6 +1,6 @@
 <template>
   <div>
-    <header class="bg-amber-100 h-[80px]">
+    <header class="bg-[#535b75] h-[80px]">
       <div>
         <img src="@/assets/images/maclogo.png" alt="" width="60" height="70" class="pt-2 ml-10" />
       </div>

@@ -9,4 +9,5 @@ export enum RouterType {
   BUDGET_LINK = 'budget-link',
   DISCOUNT_SUPPLIERS = 'discount-suppliers',
   STRIPE = 'stripe',
+  SETTINGS = 'settings',
 }

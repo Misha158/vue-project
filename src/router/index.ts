@@ -7,6 +7,7 @@ import DiscountsParentView from '@/views/Discount/DiscountsParentView.vue';
 import { sendGiftRoutes } from '@/router/sendGifts.ts';
 import { RouterType } from '@/consts/route.ts';
 import StripeView from '@/views/StripeView.vue';
+import SettingsView from '@/views/SettingsView.vue';
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -37,6 +38,12 @@ const router = createRouter({
           path: '/stripe',
           name: RouterType.STRIPE,
           component: StripeView,
+        },
+
+        {
+          path: '/settings',
+          name: RouterType.SETTINGS,
+          component: SettingsView,
         },
       ],
     },
