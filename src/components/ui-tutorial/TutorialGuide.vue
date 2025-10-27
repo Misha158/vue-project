@@ -1,9 +1,12 @@
 <template>
   <div v-if="isActive">
-    <!-- затемнение фона с вырезанным окном -->
-    <div class="overlay" :style="overlayStyle" @click="nextStep"></div>
+    <!-- затемнённый фон -->
+    <div class="overlay" @click="nextStep"></div>
 
-    <!-- тултип с описанием -->
+    <!-- подсвечиваемый элемент -->
+    <div v-if="activeElRect" class="highlight" :style="highlightStyle"></div>
+
+    <!-- тултип -->
     <div v-if="activeElRect" class="tooltip" :style="tooltipStyle">
       <h4 class="tooltip-title">{{ currentStep.title }}</h4>
       <p class="tooltip-content">{{ currentStep.content }}</p>
@@ -20,14 +23,6 @@
 <script setup>
 import { ref, computed, onMounted, nextTick, watch } from 'vue';
 
-/**
- * Props: steps — список шагов с CSS-селекторами
- * Пример:
- * [
- *   { selector: '#settings-btn', title: 'Настройки', content: 'Откройте параметры приложения' },
- *   { selector: '#profile', title: 'Профиль', content: 'Редактируйте информацию о себе' }
- * ]
- */
 const props = defineProps({
   steps: {
     type: Array,
@@ -45,23 +40,19 @@ const activeElRect = ref(null);
 
 const currentStep = computed(() => props.steps[currentStepIndex.value]);
 
-// обновляем координаты активного элемента
 const updateRect = () => {
   const step = currentStep.value;
   if (!step) return;
+
   const el = document.querySelector(step.element);
-  console.log({ el });
   if (el) {
-    const rect = el.getBoundingClientRect();
-    activeElRect.value = rect;
+    activeElRect.value = el.getBoundingClientRect();
   } else {
     activeElRect.value = null;
   }
 };
 
-onMounted(() => {
-  nextTick(updateRect);
-});
+onMounted(() => nextTick(updateRect));
 
 watch(currentStepIndex, async () => {
   await nextTick();
@@ -70,30 +61,20 @@ watch(currentStepIndex, async () => {
 
 const padding = 8;
 
-const overlayStyle = computed(() => {
+const highlightStyle = computed(() => {
   if (!activeElRect.value) return {};
-  const r = activeElRect.value;
+  const { top, left, width, height } = activeElRect.value;
   return {
     position: 'fixed',
-    inset: 0,
-    background: 'rgba(0,0,0,0.65)',
-    backdropFilter: 'blur(1px)',
-    clipPath: `polygon(
-      0 0,
-      0 100%,
-      100% 100%,
-      100% 0,
-      0 0,
-      0 ${r.top - padding}px,
-      ${r.left - padding}px ${r.top - padding}px,
-      ${r.left - padding}px ${r.bottom + padding}px,
-      ${r.right + padding}px ${r.bottom + padding}px,
-      ${r.right + padding}px ${r.top - padding}px,
-      ${r.left - padding}px ${r.top - padding}px
-    )`,
-    transition: 'clip-path 0.3s ease',
+    top: `${top - padding}px`,
+    left: `${left - padding}px`,
+    width: `${width + padding * 2}px`,
+    height: `${height + padding * 2}px`,
+    boxShadow: '0 0 0 9999px rgba(0,0,0,0.65)',
+    borderRadius: '8px',
     zIndex: 1000,
-    cursor: 'pointer',
+    pointerEvents: 'none',
+    transition: 'all 0.3s ease',
   };
 });
 
@@ -130,7 +111,11 @@ const prevStep = () => {
 
 <style scoped>
 .overlay {
-  transition: clip-path 0.3s ease;
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.65);
+  z-index: 999;
+  cursor: pointer;
 }
 
 .tooltip-title {
