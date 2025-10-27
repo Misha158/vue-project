@@ -1,15 +1,17 @@
 <template>
   <div>
     <h1 id="page-title">Настройки</h1>
-    <button id="save-btn">Сохранить</button>
-    <button id="cancel-btn">Отмена</button>
+    <UiButton id="save-btn">Сохранить</UiButton>
+    <UiButton id="cancel-btn">Отмена</UiButton>
 
-    <TutorialGuide :steps="tutorialSteps" />
+    <TutorialGuide v-if="isTutorialOn" :steps="tutorialSteps" />
   </div>
 </template>
 
 <script setup lang="ts">
 import TutorialGuide from '@/components/ui-tutorial/TutorialGuide.vue';
+import UiButton from '@/components/UiButton.vue';
+import { isTutorialOn } from '@/consts/shared.ts';
 
 const tutorialSteps = [
   {

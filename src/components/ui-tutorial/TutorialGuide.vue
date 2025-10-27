@@ -1,122 +1,165 @@
 <template>
-  <div v-if="isActive" class="tutorial-overlay">
-    <div class="tutorial-highlight" :style="highlightStyle"></div>
+  <div v-if="isActive">
+    <!-- затемнение фона с вырезанным окном -->
+    <div class="overlay" :style="overlayStyle" @click="nextStep"></div>
 
-    <div class="tutorial-popup" :style="popupStyle">
-      <h3>{{ currentStep.title }}</h3>
-      <p>{{ currentStep.content }}</p>
-
-      <div class="buttons">
-        <button @click="prevStep" :disabled="stepIndex === 0">← Назад</button>
-        <button @click="nextStep">
-          {{ stepIndex === steps.length - 1 ? 'Завершить' : 'Далее →' }}
+    <!-- тултип с описанием -->
+    <div v-if="activeElRect" class="tooltip" :style="tooltipStyle">
+      <h4 class="tooltip-title">{{ currentStep.title }}</h4>
+      <p class="tooltip-content">{{ currentStep.content }}</p>
+      <div class="tooltip-actions">
+        <button @click.stop="prevStep" :disabled="currentStepIndex === 0">Назад</button>
+        <button @click.stop="nextStep">
+          {{ currentStepIndex === steps.length - 1 ? 'Готово' : 'Далее' }}
         </button>
-        <button @click="skipTutorial">Пропустить ✖</button>
       </div>
     </div>
   </div>
 </template>
 
-<script setup lang="ts">
-import { ref, computed, onMounted, nextTick } from 'vue';
+<script setup>
+import { ref, computed, onMounted, nextTick, watch } from 'vue';
 
+/**
+ * Props: steps — список шагов с CSS-селекторами
+ * Пример:
+ * [
+ *   { selector: '#settings-btn', title: 'Настройки', content: 'Откройте параметры приложения' },
+ *   { selector: '#profile', title: 'Профиль', content: 'Редактируйте информацию о себе' }
+ * ]
+ */
 const props = defineProps({
-  steps: { type: Array, required: true },
+  steps: {
+    type: Array,
+    required: true,
+  },
+  autoStart: {
+    type: Boolean,
+    default: true,
+  },
 });
 
-const isActive = ref(false);
-const stepIndex = ref(0);
-const highlightStyle = ref({});
-const popupStyle = ref({});
+const isActive = ref(props.autoStart);
+const currentStepIndex = ref(0);
+const activeElRect = ref(null);
 
-const currentStep = computed(() => props.steps[stepIndex.value]);
+const currentStep = computed(() => props.steps[currentStepIndex.value]);
 
-const showTutorial = async () => {
-  isActive.value = true;
-  await nextTick();
-  positionHighlight();
-};
-
-const positionHighlight = () => {
-  const el = document.querySelector(currentStep.value.element);
-  if (!el) return;
-
-  const rect = el.getBoundingClientRect();
-
-  highlightStyle.value = {
-    top: `${rect.top + window.scrollY - 8}px`,
-    left: `${rect.left + window.scrollX - 8}px`,
-    width: `${rect.width + 16}px`,
-    height: `${rect.height + 16}px`,
-  };
-
-  popupStyle.value = {
-    top: `${rect.bottom + window.scrollY + 10}px`,
-    left: `${rect.left + window.scrollX}px`,
-  };
-};
-
-const nextStep = async () => {
-  if (stepIndex.value < props.steps.length - 1) {
-    stepIndex.value++;
-    await nextTick();
-    positionHighlight();
-  } else finishTutorial();
-};
-
-const prevStep = async () => {
-  if (stepIndex.value > 0) {
-    stepIndex.value--;
-    await nextTick();
-    positionHighlight();
+// обновляем координаты активного элемента
+const updateRect = () => {
+  const step = currentStep.value;
+  if (!step) return;
+  const el = document.querySelector(step.element);
+  console.log({ el });
+  if (el) {
+    const rect = el.getBoundingClientRect();
+    activeElRect.value = rect;
+  } else {
+    activeElRect.value = null;
   }
 };
-
-const finishTutorial = () => {
-  isActive.value = false;
-  localStorage.setItem('tutorialCompleted', 'true');
-};
-
-const skipTutorial = () => finishTutorial();
 
 onMounted(() => {
-  if (!localStorage.getItem('tutorialCompleted')) {
-    showTutorial();
-  }
+  nextTick(updateRect);
 });
+
+watch(currentStepIndex, async () => {
+  await nextTick();
+  updateRect();
+});
+
+const padding = 8;
+
+const overlayStyle = computed(() => {
+  if (!activeElRect.value) return {};
+  const r = activeElRect.value;
+  return {
+    position: 'fixed',
+    inset: 0,
+    background: 'rgba(0,0,0,0.65)',
+    backdropFilter: 'blur(1px)',
+    clipPath: `polygon(
+      0 0,
+      0 100%,
+      100% 100%,
+      100% 0,
+      0 0,
+      0 ${r.top - padding}px,
+      ${r.left - padding}px ${r.top - padding}px,
+      ${r.left - padding}px ${r.bottom + padding}px,
+      ${r.right + padding}px ${r.bottom + padding}px,
+      ${r.right + padding}px ${r.top - padding}px,
+      ${r.left - padding}px ${r.top - padding}px
+    )`,
+    transition: 'clip-path 0.3s ease',
+    zIndex: 1000,
+    cursor: 'pointer',
+  };
+});
+
+const tooltipStyle = computed(() => {
+  if (!activeElRect.value) return {};
+  const { top, left, height } = activeElRect.value;
+  return {
+    position: 'fixed',
+    top: `${top + height + 12}px`,
+    left: `${left}px`,
+    zIndex: 1001,
+    background: '#fff',
+    color: '#222',
+    padding: '12px 16px',
+    borderRadius: '8px',
+    boxShadow: '0 4px 20px rgba(0,0,0,0.25)',
+    width: '260px',
+    transition: 'all 0.3s ease',
+  };
+});
+
+const nextStep = () => {
+  if (currentStepIndex.value < props.steps.length - 1) {
+    currentStepIndex.value++;
+  } else {
+    isActive.value = false;
+  }
+};
+
+const prevStep = () => {
+  if (currentStepIndex.value > 0) currentStepIndex.value--;
+};
 </script>
 
 <style scoped>
-.tutorial-overlay {
-  position: fixed;
-  inset: 0;
-  background: rgba(0, 0, 0, 0.6);
-  z-index: 9999;
+.overlay {
+  transition: clip-path 0.3s ease;
 }
 
-.tutorial-highlight {
-  position: absolute;
-  border: 3px solid #00bfff;
-  border-radius: 10px;
-  box-shadow: 0 0 15px #00bfff;
-  pointer-events: none;
-  transition: all 0.3s ease;
+.tooltip-title {
+  font-weight: 600;
+  margin-bottom: 6px;
 }
 
-.tutorial-popup {
-  position: absolute;
-  background: white;
-  color: black;
-  padding: 16px;
-  border-radius: 10px;
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
-  max-width: 280px;
-  z-index: 10000;
+.tooltip-content {
+  font-size: 14px;
+  margin-bottom: 12px;
 }
 
-.buttons {
+.tooltip-actions {
   display: flex;
   justify-content: space-between;
-  margin-top: 10px;
+}
+
+.tooltip-actions button {
+  background: #007bff;
+  border: none;
+  color: white;
+  padding: 6px 12px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 14px;
+}
+
+.tooltip-actions button[disabled] {
+  opacity: 0.5;
+  cursor: not-allowed;
 }
 </style>
