@@ -75,6 +75,7 @@ const highlightStyle = computed(() => {
     zIndex: 1000,
     pointerEvents: 'none',
     transition: 'all 0.3s ease',
+    background: 'transparent', // <-- важно
   };
 });
 
@@ -110,14 +111,6 @@ const prevStep = () => {
 </script>
 
 <style scoped>
-.overlay {
-  position: fixed;
-  inset: 0;
-  background: rgba(0, 0, 0, 0.65);
-  z-index: 999;
-  cursor: pointer;
-}
-
 .tooltip-title {
   font-weight: 600;
   margin-bottom: 6px;
