@@ -73,30 +73,29 @@ onMounted(async () => {
     stripe = await loadStripe(STRIPE_PUBLIC_KEY);
 
     if (stripe) {
-      elements = stripe.elements({
-        style: {
-          base: {
-            fontSize: '16px',
-            color: '#32325d',
-            '::placeholder': { color: '#a0aec0' },
-          },
-          invalid: {
-            color: '#e53e3e',
-          },
-        },
-      });
+      elements = stripe.elements();
 
-      cardNumberElement = elements.create('cardNumber');
+      const elementStyle = {
+        base: {
+          fontSize: '16px',
+          color: '#32325d',
+          '::placeholder': { color: '#a0aec0' },
+        },
+        invalid: { color: '#e53e3e' },
+      } as const;
+
+      cardNumberElement = elements.create('cardNumber', { style: elementStyle });
       cardNumberElement.mount('#card-number-element');
 
-      cardExpiryElement = elements.create('cardExpiry');
+      cardExpiryElement = elements.create('cardExpiry', { style: elementStyle });
       cardExpiryElement.mount('#card-expiry-element');
 
-      cardCvcElement = elements.create('cardCvc');
+      cardCvcElement = elements.create('cardCvc', { style: elementStyle });
       cardCvcElement.mount('#card-cvc-element');
     }
-  } catch (err: any) {
-    error.value = err.message || 'Stripe initialization failed.';
+  } catch (err: unknown) {
+    const message = err instanceof Error ? err.message : 'Stripe initialization failed.';
+    error.value = message;
   }
 });
 
@@ -124,12 +123,14 @@ const handleSubmit = async () => {
     });
 
     if (result.error) {
-      error.value = result.error.message;
+      error.value = result.error.message ?? 'Payment error.';
     } else {
       success.value = true;
+      // Handle success as needed
     }
-  } catch (err: any) {
-    error.value = err.message || 'Payment failed.';
+  } catch (err: unknown) {
+    const message = err instanceof Error ? err.message : 'Payment failed.';
+    error.value = message;
   } finally {
     loading.value = false;
   }
@@ -137,6 +138,28 @@ const handleSubmit = async () => {
 </script>
 
 <style>
+#card-number-element,
+#card-expiry-element,
+#card-cvc-element {
+  /* Ensure Stripe iframes stretch to fill the container */
+  width: 100%;
+}
+
+.stripe-input {
+  border: 1px solid #e5e7eb; /* Tailwind gray-200 */
+  border-radius: 0.375rem; /* Tailwind rounded-md */
+  padding: 0.5rem 0.75rem; /* Tailwind py-2 px-3 */
+  background-color: #ffffff;
+  transition:
+    border-color 0.2s ease,
+    box-shadow 0.2s ease;
+}
+
+.stripe-input:focus-within {
+  border-color: #3b82f6; /* Tailwind blue-500 */
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.2); /* focus ring */
+}
+
 #card-element {
   padding: 10px;
   border: 1px solid #ccc;
