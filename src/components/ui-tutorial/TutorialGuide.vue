@@ -1,8 +1,5 @@
 <template>
   <div v-if="isActive">
-    <!-- затемнённый фон -->
-    <div class="overlay" @click="nextStep"></div>
-
     <!-- подсвечиваемый элемент -->
     <div v-if="activeElRect" class="highlight" :style="highlightStyle"></div>
 
@@ -21,6 +18,10 @@
 </template>
 
 <script setup>
+// Exmplanation
+// 1. Take coordinates and w/h from current element
+// 2.
+
 import { ref, computed, onMounted, nextTick, watch } from 'vue';
 
 const props = defineProps({
