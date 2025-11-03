@@ -4,7 +4,7 @@
     <UiButton id="save-btn">Сохранить</UiButton>
     <UiButton id="cancel-btn">Отмена</UiButton>
 
-    <TutorialGuide v-if="isTutorialOn" :steps="tutorialSteps" />
+    <TutorialGuide v-if="isTutorialOn" :steps="tutorialSteps" :position="'right'" />
   </div>
 </template>
 

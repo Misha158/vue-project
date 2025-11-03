@@ -33,6 +33,11 @@ const props = defineProps({
     type: Boolean,
     default: true,
   },
+  position: {
+    type: String,
+    default: 'bottom',
+    validator: (value) => ['top', 'bottom', 'left', 'right'].includes(value),
+  },
 });
 
 const isActive = ref(props.autoStart);
@@ -82,20 +87,54 @@ const highlightStyle = computed(() => {
 
 const tooltipStyle = computed(() => {
   if (!activeElRect.value) return {};
-  const { top, left, height } = activeElRect.value;
-  return {
+  const { top, left, width, height } = activeElRect.value;
+  const spacing = 12;
+  const tooltipWidth = 260;
+
+  const baseStyle = {
     position: 'fixed',
-    top: `${top + height + 12}px`,
-    left: `${left}px`,
     zIndex: 1001,
     background: '#fff',
     color: '#222',
     padding: '12px 16px',
     borderRadius: '8px',
     boxShadow: '0 4px 20px rgba(0,0,0,0.25)',
-    width: '260px',
+    width: `${tooltipWidth}px`,
     transition: 'all 0.3s ease',
   };
+
+  switch (props.position) {
+    case 'top':
+      return {
+        ...baseStyle,
+        bottom: `${window.innerHeight - top + spacing}px`,
+        left: `${left}px`,
+      };
+    case 'bottom':
+      return {
+        ...baseStyle,
+        top: `${top + height + spacing}px`,
+        left: `${left}px`,
+      };
+    case 'left':
+      return {
+        ...baseStyle,
+        top: `${top}px`,
+        right: `${window.innerWidth - left + spacing}px`,
+      };
+    case 'right':
+      return {
+        ...baseStyle,
+        top: `${top}px`,
+        left: `${left + width + spacing}px`,
+      };
+    default:
+      return {
+        ...baseStyle,
+        top: `${top + height + spacing}px`,
+        left: `${left}px`,
+      };
+  }
 });
 
 const nextStep = () => {
