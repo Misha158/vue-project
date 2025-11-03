@@ -103,7 +103,14 @@ const tooltipStyle = computed(() => {
     transition: 'all 0.3s ease',
   };
 
-  switch (props.position) {
+  const allowed = ['top', 'bottom', 'left', 'right'];
+  const stepPosition =
+    currentStep.value && allowed.includes(currentStep.value.position)
+      ? currentStep.value.position
+      : undefined;
+  const position = stepPosition || props.position || 'bottom';
+
+  switch (position) {
     case 'top':
       return {
         ...baseStyle,

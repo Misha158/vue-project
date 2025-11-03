@@ -18,16 +18,19 @@ const tutorialSteps = [
     element: '#page-title',
     title: 'Раздел настроек',
     content: 'Здесь вы можете управлять параметрами приложения.',
+    position: 'bottom',
   },
   {
     element: '#save-btn',
     title: 'Кнопка сохранения',
     content: 'Нажмите, чтобы применить изменения.',
+    position: 'left',
   },
   {
     element: '#cancel-btn',
     title: 'Отмена',
     content: 'Нажмите, чтобы выйти без сохранения.',
+    position: 'right',
   },
 ];
 </script>
