@@ -62,6 +62,59 @@ export const useAuthStore = defineStore('auth', () => {
     }
   };
 
+  const register = async (email: string, password: string, name?: string) => {
+    isLoading.value = true;
+    error.value = null;
+
+    // Валидация
+    if (!email || !password) {
+      error.value = 'Email и пароль обязательны';
+      isLoading.value = false;
+      return { success: false, error: error.value };
+    }
+
+    if (password.length < 6) {
+      error.value = 'Пароль должен содержать минимум 6 символов';
+      isLoading.value = false;
+      return { success: false, error: error.value };
+    }
+
+    try {
+      // TODO: Заменить на реальный API вызов
+      // const response = await fetch('/api/auth/register', {
+      //   method: 'POST',
+      //   headers: { 'Content-Type': 'application/json' },
+      //   body: JSON.stringify({ email, password, name }),
+      // });
+      // const data = await response.json();
+
+      // Временная имитация API
+      await new Promise((resolve) => setTimeout(resolve, 1000));
+
+      // Временные данные для демонстрации
+      const mockUser: User = {
+        id: Date.now().toString(),
+        email: email,
+        name: name || email.split('@')[0],
+      };
+      const mockToken = 'mock-jwt-token-' + Date.now();
+
+      user.value = mockUser;
+      token.value = mockToken;
+
+      // Сохраняем в localStorage
+      localStorage.setItem('auth_token', mockToken);
+      localStorage.setItem('user', JSON.stringify(mockUser));
+
+      return { success: true };
+    } catch (err) {
+      error.value = err instanceof Error ? err.message : 'Ошибка при регистрации';
+      return { success: false, error: error.value };
+    } finally {
+      isLoading.value = false;
+    }
+  };
+
   const logout = () => {
     user.value = null;
     token.value = null;
@@ -90,6 +143,7 @@ export const useAuthStore = defineStore('auth', () => {
     error,
     isAuthenticated,
     login,
+    register,
     logout,
     initializeAuth,
   };
