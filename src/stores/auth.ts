@@ -1,10 +1,33 @@
 import { ref, computed } from 'vue';
 import { defineStore } from 'pinia';
+import axios from 'axios';
+
+const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:3000';
 
 interface User {
   id: string;
   email: string;
   name?: string;
+}
+
+interface LoginResponse {
+  access_token: string;
+  user: {
+    id: string;
+    email: string;
+    name: string;
+    createdAt: string;
+  };
+}
+
+interface RegisterResponse {
+  access_token: string;
+  user: {
+    id: string;
+    email: string;
+    name: string;
+    createdAt: string;
+  };
 }
 
 export const useAuthStore = defineStore('auth', () => {
@@ -27,48 +50,64 @@ export const useAuthStore = defineStore('auth', () => {
     }
 
     try {
-      // TODO: Заменить на реальный API вызов
-      // const response = await fetch('/api/auth/login', {
-      //   method: 'POST',
-      //   headers: { 'Content-Type': 'application/json' },
-      //   body: JSON.stringify({ email, password }),
-      // });
-      // const data = await response.json();
+      const response = await axios.post<LoginResponse>(`${API_BASE_URL}/auth/login`, {
+        email,
+        password,
+      });
 
-      // Временная имитация API (password используется в реальном API)
-      await new Promise((resolve) => setTimeout(resolve, 1000));
+      const { access_token, user: userData } = response.data;
 
-      // Временные данные для демонстрации
-      const mockUser: User = {
-        id: '1',
-        email: email,
-        name: email.split('@')[0],
+      // Сохраняем данные пользователя
+      const authUser: User = {
+        id: userData.id,
+        email: userData.email,
+        name: userData.name,
       };
-      const mockToken = 'mock-jwt-token-' + Date.now();
 
-      user.value = mockUser;
-      token.value = mockToken;
+      user.value = authUser;
+      token.value = access_token;
 
       // Сохраняем в localStorage
-      localStorage.setItem('auth_token', mockToken);
-      localStorage.setItem('user', JSON.stringify(mockUser));
+      localStorage.setItem('auth_token', access_token);
+      localStorage.setItem('user', JSON.stringify(authUser));
 
       return { success: true };
-    } catch (err) {
-      error.value = err instanceof Error ? err.message : 'Ошибка при входе';
+    } catch (err: any) {
+      // Обработка ошибок от API
+      if (axios.isAxiosError(err)) {
+        if (err.response?.status === 401) {
+          error.value = 'Неверный email или пароль';
+        } else if (err.response?.data?.message) {
+          // Обработка ошибок валидации
+          const messages = Array.isArray(err.response.data.message)
+            ? err.response.data.message.join(', ')
+            : err.response.data.message;
+          error.value = messages;
+        } else {
+          error.value = 'Ошибка при входе. Проверьте подключение к серверу.';
+        }
+      } else {
+        error.value = err instanceof Error ? err.message : 'Ошибка при входе';
+      }
       return { success: false, error: error.value };
     } finally {
       isLoading.value = false;
     }
   };
 
-  const register = async (email: string, password: string, name?: string) => {
+  const register = async (email: string, password: string, name: string) => {
     isLoading.value = true;
     error.value = null;
 
     // Валидация
     if (!email || !password) {
       error.value = 'Email и пароль обязательны';
+      isLoading.value = false;
+      return { success: false, error: error.value };
+    }
+
+    if (!name || name.length < 2) {
+      error.value = 'Имя обязательно и должно содержать минимум 2 символа';
       isLoading.value = false;
       return { success: false, error: error.value };
     }
@@ -80,35 +119,46 @@ export const useAuthStore = defineStore('auth', () => {
     }
 
     try {
-      // TODO: Заменить на реальный API вызов
-      // const response = await fetch('/api/auth/register', {
-      //   method: 'POST',
-      //   headers: { 'Content-Type': 'application/json' },
-      //   body: JSON.stringify({ email, password, name }),
-      // });
-      // const data = await response.json();
+      const response = await axios.post<RegisterResponse>(`${API_BASE_URL}/auth/register`, {
+        email,
+        password,
+        name,
+      });
 
-      // Временная имитация API
-      await new Promise((resolve) => setTimeout(resolve, 1000));
+      const { access_token, user: userData } = response.data;
 
-      // Временные данные для демонстрации
-      const mockUser: User = {
-        id: Date.now().toString(),
-        email: email,
-        name: name || email.split('@')[0],
+      // Сохраняем данные пользователя
+      const authUser: User = {
+        id: userData.id,
+        email: userData.email,
+        name: userData.name,
       };
-      const mockToken = 'mock-jwt-token-' + Date.now();
 
-      user.value = mockUser;
-      token.value = mockToken;
+      user.value = authUser;
+      token.value = access_token;
 
       // Сохраняем в localStorage
-      localStorage.setItem('auth_token', mockToken);
-      localStorage.setItem('user', JSON.stringify(mockUser));
+      localStorage.setItem('auth_token', access_token);
+      localStorage.setItem('user', JSON.stringify(authUser));
 
       return { success: true };
-    } catch (err) {
-      error.value = err instanceof Error ? err.message : 'Ошибка при регистрации';
+    } catch (err: any) {
+      // Обработка ошибок от API
+      if (axios.isAxiosError(err)) {
+        if (err.response?.status === 409) {
+          error.value = 'Пользователь с таким email уже существует';
+        } else if (err.response?.data?.message) {
+          // Обработка ошибок валидации
+          const messages = Array.isArray(err.response.data.message)
+            ? err.response.data.message.join(', ')
+            : err.response.data.message;
+          error.value = messages;
+        } else {
+          error.value = 'Ошибка при регистрации. Проверьте подключение к серверу.';
+        }
+      } else {
+        error.value = err instanceof Error ? err.message : 'Ошибка при регистрации';
+      }
       return { success: false, error: error.value };
     } finally {
       isLoading.value = false;

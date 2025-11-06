@@ -4,7 +4,7 @@
       <h1 class="registration-title">Регистрация</h1>
 
       <form @submit.prevent="handleSubmit" class="form">
-        <UiInput v-model="name" placeholder="Имя"> Имя (необязательно) </UiInput>
+        <UiInput v-model="name" placeholder="Имя"> Имя </UiInput>
 
         <UiInput v-model="email" placeholder="Email"> Email </UiInput>
 
@@ -57,14 +57,19 @@ const confirmPassword = ref('');
 const validationError = ref('');
 
 const isFormValid = computed(() => {
-  return !!email.value && !!password.value && !!confirmPassword.value;
+  return !!name.value && !!email.value && !!password.value && !!confirmPassword.value;
 });
 
 const validateForm = (): boolean => {
   validationError.value = '';
 
-  if (!email.value || !password.value || !confirmPassword.value) {
+  if (!name.value || !email.value || !password.value || !confirmPassword.value) {
     validationError.value = 'Все поля обязательны для заполнения';
+    return false;
+  }
+
+  if (name.value.length < 2) {
+    validationError.value = 'Имя должно содержать минимум 2 символа';
     return false;
   }
 
@@ -93,7 +98,7 @@ const handleSubmit = async () => {
     return;
   }
 
-  const result = await authStore.register(email.value, password.value, name.value || undefined);
+  const result = await authStore.register(email.value, password.value, name.value);
 
   if (result.success) {
     router.push({ name: 'home' });
