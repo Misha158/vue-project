@@ -10,4 +10,6 @@ export enum RouterType {
   DISCOUNT_SUPPLIERS = 'discount-suppliers',
   STRIPE = 'stripe',
   SETTINGS = 'settings',
+  LOGIN = 'login',
+  REGISTRATION = 'registration',
 }

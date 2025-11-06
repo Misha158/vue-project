@@ -4,7 +4,7 @@
       <slot />
     </span>
     <input
-      type="text"
+      :type="type"
       :value="modelValue"
       @input="$emit('update:modelValue', ($event.target as HTMLInputElement).value)"
       :placeholder="placeholder"
@@ -16,13 +16,17 @@
 interface Props {
   modelValue: string;
   placeholder?: string;
+  type?: string;
 }
+
+const props = withDefaults(defineProps<Props>(), {
+  type: 'text',
+});
 
 interface Emit {
   (e: 'update:modelValue', value: string): void;
 }
 
-defineProps<Props>();
 defineEmits<Emit>();
 </script>
 

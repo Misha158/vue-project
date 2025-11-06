@@ -8,10 +8,22 @@ import { sendGiftRoutes } from '@/router/sendGifts.ts';
 import { RouterType } from '@/consts/route.ts';
 import StripeView from '@/views/StripeView.vue';
 import SettingsView from '@/views/SettingsView.vue';
+import LoginView from '@/views/LoginView.vue';
+import RegistrationView from '@/views/RegistrationView.vue';
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   routes: [
+    {
+      path: '/login',
+      name: RouterType.LOGIN,
+      component: LoginView,
+    },
+    {
+      path: '/registration',
+      name: RouterType.REGISTRATION,
+      component: RegistrationView,
+    },
     {
       path: '/',
       name: '',
