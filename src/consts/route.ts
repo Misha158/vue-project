@@ -12,4 +12,5 @@ export enum RouterType {
   SETTINGS = 'settings',
   LOGIN = 'login',
   REGISTRATION = 'registration',
+  SLACK = 'slack',
 }

@@ -50,6 +50,7 @@ const links = [
   { label: 'Discounts table', componentName: RouterType.DISCOUNT_SUPPLIERS, icon: IconSendGift },
   { label: 'Stripe', componentName: RouterType.STRIPE, icon: IconSendGift },
   { label: 'Sittings', componentName: RouterType.SETTINGS, icon: IconSendGift },
+  { label: 'Slack', componentName: RouterType.SLACK, icon: IconSendGift },
 ];
 
 const isCollapsed = ref(false);

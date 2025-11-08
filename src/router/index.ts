@@ -10,6 +10,7 @@ import StripeView from '@/views/StripeView.vue';
 import SettingsView from '@/views/SettingsView.vue';
 import LoginView from '@/views/LoginView.vue';
 import RegistrationView from '@/views/RegistrationView.vue';
+import SlackView from '@/views/SlackView.vue';
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -56,6 +57,12 @@ const router = createRouter({
           path: '/settings',
           name: RouterType.SETTINGS,
           component: SettingsView,
+        },
+
+        {
+          path: '/slack',
+          name: RouterType.SLACK,
+          component: SlackView,
         },
       ],
     },
