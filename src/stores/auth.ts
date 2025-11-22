@@ -172,17 +172,86 @@ export const useAuthStore = defineStore('auth', () => {
     localStorage.removeItem('user');
   };
 
-  const initializeAuth = () => {
+  const verifyToken = async (tokenToVerify: string): Promise<boolean> => {
+    try {
+      // Проверяем валидность токена на сервере
+      const response = await axios.get(`${API_BASE_URL}/auth/verify`, {
+        headers: {
+          Authorization: `Bearer ${tokenToVerify}`,
+        },
+      });
+
+      if (response.status === 200 && response.data) {
+        // Обновляем данные пользователя, если они изменились
+        if (response.data.user) {
+          const authUser: User = {
+            id: response.data.user.id,
+            email: response.data.user.email,
+            name: response.data.user.name,
+          };
+          user.value = authUser;
+          localStorage.setItem('user', JSON.stringify(authUser));
+        }
+        return true;
+      }
+      return false;
+    } catch (err) {
+      // Если токен невалиден, возвращаем false
+      return false;
+    }
+  };
+
+  const isTokenExpired = (tokenToCheck: string): boolean => {
+    try {
+      // JWT токен состоит из трех частей, разделенных точками
+      const parts = tokenToCheck.split('.');
+      if (parts.length !== 3) {
+        return true;
+      }
+
+      // Декодируем payload (вторая часть)
+      const payload = JSON.parse(atob(parts[1]));
+      
+      // Проверяем срок действия токена
+      if (payload.exp) {
+        const expirationTime = payload.exp * 1000; // exp в секундах, конвертируем в миллисекунды
+        return Date.now() >= expirationTime;
+      }
+
+      // Если exp нет, считаем токен валидным (но лучше проверить на сервере)
+      return false;
+    } catch {
+      return true;
+    }
+  };
+
+  const initializeAuth = async () => {
     const storedToken = localStorage.getItem('auth_token');
     const storedUser = localStorage.getItem('user');
 
-    if (storedToken && storedUser) {
+    if (!storedToken || !storedUser) {
+      logout();
+      return;
+    }
+
+    // Проверяем срок действия токена локально
+    if (isTokenExpired(storedToken)) {
+      logout();
+      return;
+    }
+
+    // Проверяем токен на сервере
+    const isValid = await verifyToken(storedToken);
+    
+    if (isValid) {
       token.value = storedToken;
       try {
         user.value = JSON.parse(storedUser);
       } catch {
         logout();
       }
+    } else {
+      logout();
     }
   };
 
@@ -196,5 +265,6 @@ export const useAuthStore = defineStore('auth', () => {
     register,
     logout,
     initializeAuth,
+    verifyToken,
   };
 });
